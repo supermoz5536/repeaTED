@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "158157854816",
+    "project_id": "repeated-c1cef",
+    "storage_bucket": "repeated-c1cef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158157854816:android:7e715df7bb75d2a8be4b05",
+        "android_client_info": {
+          "package_name": "com.example.repea_ted"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy7VUYF5fRnd4zkVB9lLOwWVUWHFWK874"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158157854816:android:94b62967cff2ccbdbe4b05",
+        "android_client_info": {
+          "package_name": "com.example.udemy_copy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy7VUYF5fRnd4zkVB9lLOwWVUWHFWK874"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
