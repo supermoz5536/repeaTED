@@ -50,6 +50,7 @@ dependencies:
   collection: ^1.18.0
   path_provider: ^2.1.2
   firebase_analytics: ^10.8.9
+  youtube_player_iframe: ^5.1.1
 
 flutter_native_splash:
   color: '#dcfcfc'

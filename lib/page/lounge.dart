@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 
 class LoungePage extends ConsumerStatefulWidget {
@@ -15,12 +16,22 @@ class _LoungePageState extends ConsumerState<LoungePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController showDialogNameController = TextEditingController();
   final TextEditingController statementController = TextEditingController();
+  late final YoutubePlayerController controller;
 
 
   @override
   void initState() {
     super.initState();
-
+    controller = YoutubePlayerController.fromVideoId(
+      videoId: 'sYOS4qOHxdg',
+      params: const YoutubePlayerParams(
+        mute: false,
+        showControls: true,
+        showFullscreenButton: true,
+        enableCaption: true,
+        captionLanguage: 'ja',
+      ),
+    );
   }
 
   @override
@@ -467,6 +478,17 @@ class _LoungePageState extends ConsumerState<LoungePage> {
 
       body: Stack(
         children: <Widget>[
+
+          Column(
+            children: [
+              SizedBox(
+                child: YoutubePlayer(
+                controller: controller,
+                aspectRatio: 16 / 9,
+                ),
+              )
+            ],
+          )
 
         ],
       ),
