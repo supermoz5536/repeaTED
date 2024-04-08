@@ -1,7 +1,13 @@
+// import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:repea_ted/cloud_functions/functions.dart';
+import 'package:repea_ted/model/caption_tracks.dart';
+import 'package:repea_ted/model/linked_captions.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
+// import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class LoungePage extends ConsumerStatefulWidget {
   const LoungePage({super.key});
@@ -16,13 +22,26 @@ class _LoungePageState extends ConsumerState<LoungePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController showDialogNameController = TextEditingController();
   final TextEditingController statementController = TextEditingController();
-  late final YoutubePlayerController controller;
-
+  late final YoutubePlayerController iFrameController;
+  final FlutterTts tts = FlutterTts();
+  // var yt = YoutubeExplode();
+  var videoId = 'sYOS4qOHxdg';
+  // late ClosedCaptionManifest trackManifest;
+  late PairCaption pairCaption;
+  List<PairCaption>? pairCaptions = [];
+  bool? isUnStarted = false;
+  bool? isPlayingTriggered = false;
+  int? currentCaptionIndex = 0;
+  dynamic captionsEn;
+  dynamic captionsJa;
 
   @override
   void initState() {
     super.initState();
-    controller = YoutubePlayerController.fromVideoId(
+
+
+    // ■ YoutubePlayerControllerの初期化
+    iFrameController = YoutubePlayerController.fromVideoId(
       videoId: 'sYOS4qOHxdg',
       params: const YoutubePlayerParams(
         mute: false,
@@ -32,7 +51,183 @@ class _LoungePageState extends ConsumerState<LoungePage> {
         captionLanguage: 'ja',
       ),
     );
+
+
+    // ■ リスナーの配置
+    listenPlayer();
+
+
+    // ■ キャプションデータのロード
+    // 実際のクローズドキャプショントラック（字幕データ）を非同期で取得します。
+    // get(trackInfo)メソッドは
+    // 指定した字幕トラック情報に基づいて字幕データを返します。
+    CloudFunctions.callGetCaptions(videoId).then((captions) {
+
+    // キャプションデータを Map<String, dynamic> にキャストする処理（アロー関数を使用せず）
+    captionsEn = captions!.en.map((caption) {
+      return Map<String, dynamic>.from(caption);
+    }).toList();
+
+    captionsJa = captions.ja.map((caption) {
+      return Map<String, dynamic>.from(caption);
+    }).toList();  
+
+
+      // 各キャプションに対して処理を行う
+      // for (var captionEn in captionsEn) {
+        // print('キャプションの同期処理 1');
+        // print('EN Caption Sample: ${captions.en[0]}');
+        // print('JA Caption Sample: ${captions.ja[0]}');
+
+        // var margin = const Duration(seconds: 3);
+        // double startValueEn = double.parse(captionEn['start']); 
+      
+
+        // print('startValueEn == $startValueEn');
+        // print('startValueJa == $startValueJa');
+        // print('startValueEn の型 == ${startValueEn.runtimeType}');
+        // print('startValueJa の型 == ${startValueJa.runtimeType}');
+
+
+        // 対応する日本語キャプションを見つける
+        // var correspondingJaCaption = captionsJa.firstWhere(
+        //   (captionJa) {
+        //     double startValueJa = double.parse(captionJa['start']);  
+            
+            // print('■ startValueEn == $startValueEn');
+            // print('■ startValueJa == $startValueJa');
+            // print('■ captionsJaの格納値: $captionJa');
+            // print('■ 条件式 1.0 == ${startValueJa.compareTo(startValueEn - margin.inSeconds.toDouble())}');
+            // print('■ 条件式 1.1 == ${startValueJa}');
+            // print('■ 条件式 1.2 == ${(startValueEn - margin.inSeconds.toDouble())}');
+            // print('■ 条件式 2.0 == ${startValueJa.compareTo(startValueEn + margin.inSeconds.toDouble())}');
+            // print('■ 条件式 2.1 == ${startValueJa}');
+            // print('■ 条件式 2.2 == ${(startValueEn + margin.inSeconds.toDouble())}');
+
+            // 英語キャプションの開始時刻(end)から
+            // margine(２秒)を引いたカウントよりも
+            // 日本語キャプションの終了時刻が、後に(compareTo が >= 0)に位置し、
+            // かつ
+            // 英語キャプションの開始時刻(end)から
+            // margine(２秒)を足したカウントよりも
+            // 日本語キャプションの終了時刻が、前に(compareTo が <= 0)に位置する場合
+            // 補足: .inSecondsでint型に変換し、さらにdouble型に変換して型一致させる    
+          //   bool startsWithinMargin = 
+          //     startValueJa
+          //       .compareTo(startValueEn - margin.inSeconds.toDouble()) >= 0
+          //   && startValueJa
+          //       .compareTo(startValueEn + margin.inSeconds.toDouble()) <= 0;       
+
+          //   // print('StartsWithinMargin: $startsWithinMargin');
+
+          //   return startsWithinMargin;
+          // },
+
+          // // 一致するキャプションが見つからなかった場合は
+          // // 空オブジェクトを返しておく
+          // // (読み上げ時に、処理が発生しないようにする)
+          // orElse: () {
+          //   print('条件に合致しない、orElse実行');
+          //   return {"start": '', "dur": '', "text": ''};
+          // },
+        // );
+        
+        // print('キャプションの同期処理 3 correspondingJaCaption == ${correspondingJaCaption}');      
+
+          // 英語キャプションとそれに紐づく日本語キャプションをペアで管理
+          // pairCaption = PairCaption(
+          //                 en: captionEn,
+          //                 ja: captionJa,
+          //               );
+        // print('キャプションの同期処理 4 pairCaption == ${pairCaption}');
+          // ペアで管理したオブジェクトをリストで管理
+          // pairCaptions!.add(pairCaption);   
+        // print('キャプションの同期処理 5');
+      // }  
+    }).then((_) {
+      // ロード完了を確認して
+      // 初回の再生をトリガー
+      // print('playVideo()で再生をトリガー');
+    });
   }
+
+
+
+  /// 各キャプションにおける自動処理の内容を記述
+  void listenPlayer() {
+    print('listenerの配置完了');
+    iFrameController.listen((event) async{
+    
+      // 動画が読み込まれ、まだ再生されていない場合の処理
+      if (iFrameController.value.playerState == PlayerState.unStarted) {
+        if (isUnStarted == false) {
+          print('動画の読み込み完了しましたが、まだ再生が開始されていません。');
+          isUnStarted = true;
+
+          // 動画の再読み込みが発生した場合に
+          // 再生ポジションを現キャプションの開始時刻に移動し
+          // その後に再生
+          double seekTime = captionsJa[currentCaptionIndex]['start'];
+
+         await iFrameController.seekTo(
+            seconds: seekTime,
+            allowSeekAhead: false
+          );
+
+         await iFrameController.playVideo();
+        }
+      }
+    
+      // 動画が再生中の場合の処理
+      if (iFrameController.value.playerState == PlayerState.playing) {
+        if (isPlayingTriggered == false) {
+          isUnStarted = false;          
+          isPlayingTriggered = true;
+          print('動画が再生中です。');
+
+          // ① map型captionオブジェクトからdurキーの値を取得して
+          double durationTime = captionsJa[currentCaptionIndex]['dur'];
+
+          // ② そのカウント後に停止メソッドが実行されるようにスケジュール
+          await Future.delayed(
+            // 第1引数
+            Duration(milliseconds: (durationTime * 1000).toInt()),
+            // 第2引数
+            () {iFrameController.pauseVideo();}
+            
+          );
+        }
+      }
+    
+      // 動画が一時停止された場合の処理
+      if (iFrameController.value.playerState == PlayerState.paused) {
+        isPlayingTriggered = false;
+        print('動画が一時停止された状態');
+
+        // TTSでキャプションの読み上げ
+        await tts.speak(
+          captionsJa[currentCaptionIndex]['text'],
+        );
+
+        // 再生ポジションを次のIndexのstartの時刻に変更
+        await iFrameController.seekTo(
+          seconds: captionsJa[currentCaptionIndex! + 1]['start'],
+          allowSeekAhead: false
+        );
+        // 再生をトリガー
+         await iFrameController.playVideo();
+      }
+    
+      // // 動画が一停止された場合の処理
+      // if (iFrameController.value.playerState == PlayerState.ended) {  
+      //   print('動画が終了した状態');
+      //   isPlayingTriggered = false;
+      // }
+    });
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -483,7 +678,7 @@ class _LoungePageState extends ConsumerState<LoungePage> {
             children: [
               SizedBox(
                 child: YoutubePlayer(
-                controller: controller,
+                controller: iFrameController,
                 aspectRatio: 16 / 9,
                 ),
               )
