@@ -1,6 +1,5 @@
 // import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repea_ted/cloud_functions/functions.dart';
 import 'package:repea_ted/model/caption_tracks.dart';
@@ -10,14 +9,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 // import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-class LoungePage extends ConsumerStatefulWidget {
-  const LoungePage({super.key});
+class Lounge2 extends ConsumerStatefulWidget {
+  const Lounge2({super.key});
 
   @override
-  ConsumerState<LoungePage> createState() => _LoungePageState();
+  ConsumerState<Lounge2> createState() => _LoungePageState();
 }
 
-class _LoungePageState extends ConsumerState<LoungePage> {
+class _LoungePageState extends ConsumerState<Lounge2> {
   final _overlayController1st = OverlayPortalController();
   final _overlayController2nd = OverlayPortalController();
   final TextEditingController nameController = TextEditingController();
@@ -26,14 +25,14 @@ class _LoungePageState extends ConsumerState<LoungePage> {
   late final YoutubePlayerController iFrameController;
   final FlutterTts tts = FlutterTts();
   // var yt = YoutubeExplode();
-  var videoId = 'sYOS4qOHxdg';
+  var videoId = 'gBumdOWWMhY';
   // late ClosedCaptionManifest trackManifest;
   late PairCaption pairCaption;
   List<PairCaption>? pairCaptions = [];
   bool? isUnStarted = false;
   bool? isPlaying = false;
   bool? isPaused = false;
-  bool? isLoading = true;
+  bool? isLoaded = false;
   int? currentCaptionIndex = 0;
   int? captionTrackLength;
   dynamic captionsEn;
@@ -47,15 +46,15 @@ class _LoungePageState extends ConsumerState<LoungePage> {
     super.initState();
 
 
-    // ■ YoutubePlayerControllerの初期化.
+    // ■ YoutubePlayerControllerの初期化
     iFrameController = YoutubePlayerController.fromVideoId(
-      videoId: 'sYOS4qOHxdg',
+      videoId: 'gBumdOWWMhY',
       params: const YoutubePlayerParams(
         mute: false,
         showControls: true,
         showFullscreenButton: true,
         enableCaption: true,
-        captionLanguage: 'en',
+        captionLanguage: 'ja',
       ),
     );
 
@@ -77,15 +76,13 @@ class _LoungePageState extends ConsumerState<LoungePage> {
       return Map<String, dynamic>.from(caption);
     }).toList();  
 
-    captionTrackLength = captions.ja.length;    
+    captionTrackLength = captions.en.length;    
+    print('キャプション数 == ${captions.en.length}');
 
     }).then((value) {
       // ■ キャプションデータのロードを確実に完了してからリスナーを配置
       print('リスナーの配置完了');
       listenPlayer();
-      setState(() {
-        isLoading = false;  
-      });
     });
   }
 
@@ -107,7 +104,7 @@ class _LoungePageState extends ConsumerState<LoungePage> {
 
           // 'start'の値が文字列で数字表記になっているので
           // 型のキャスト String → double
-          seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+          seekTime = double.parse(captionsEn[currentCaptionIndex]['start']);
           // print('■ 7 seekTimeの値確認: $seekTime');
 
           // 再生ポジションを現キャプションの開始時刻に移動し
@@ -133,7 +130,7 @@ class _LoungePageState extends ConsumerState<LoungePage> {
           // print('▲ 3 該当キャプションの dur値の確認: ${(captionsJa[currentCaptionIndex]['dur'])}');
           // 'dur'の値が文字列で数字表記になっているので
           // 型のキャスト String → double
-          durationTime = double.parse(captionsJa[currentCaptionIndex]['dur']);
+          durationTime = double.parse(captionsEn[currentCaptionIndex]['dur']);
           // print('▲ 4 durationTimeの代入後の値: ${(captionsJa[currentCaptionIndex]['dur'])}');
           
 
@@ -159,19 +156,23 @@ class _LoungePageState extends ConsumerState<LoungePage> {
 
           // TTSでキャプションの読み上げ
           await tts.speak(
-            captionsJa[currentCaptionIndex]['text'],
+            captionsEn[currentCaptionIndex]['text'],
           );
         }
       }
     
-      // 動画が停止された場合の処理
+      // ■ 動画が終了して最初に戻る場合の処理
+      // 最後から1つ前のキャプションでこの分岐に入れる理由は
+      // playingの分岐に入る前に
+      // その前の buffering の間で
+      // captionTrackLength! - 1 をキャッチしている
       if (currentCaptionIndex == captionTrackLength! - 1) {  
         print('動画が終了した状態');
         isUnStarted = false;
         isPlaying = false;
         isPaused = true;
         currentCaptionIndex = 0;
-        seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+        seekTime = double.parse(captionsEn[currentCaptionIndex]['start']);
 
         // 再生ポジションを現キャプションの開始時刻に移動し
         await iFrameController.seekTo(
@@ -188,7 +189,7 @@ class _LoungePageState extends ConsumerState<LoungePage> {
 
   Future<void> initTTS() async {
     // 音量を70%に設定
-    await tts.setVolume(0.5); 
+    await tts.setVolume(0.7); 
 
     // 読み上げ完了時のコールバック設定
     tts.setCompletionHandler(() async{
@@ -196,7 +197,7 @@ class _LoungePageState extends ConsumerState<LoungePage> {
 
           currentCaptionIndex = currentCaptionIndex! + 1;
 
-          seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+          seekTime = double.parse(captionsEn[currentCaptionIndex]['start']);
           print('● 3 キャスト完了');
 
           // 再生ポジションを次のIndexのstartの時刻に変更
@@ -221,12 +222,6 @@ class _LoungePageState extends ConsumerState<LoungePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('RepeaTED（リピーテッド）BETA版',
-          style: TextStyle(
-            fontSize: 17.5,
-            fontWeight: FontWeight.bold,
-          ),),
-        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 3,
         shadowColor: Colors.black.withOpacity(0.7),
@@ -663,47 +658,42 @@ class _LoungePageState extends ConsumerState<LoungePage> {
 
 
 
-      body: isLoading == true
-        ? const Center(child: CircularProgressIndicator()) // ローディング中はインジケーターを表示
-        : Stack(
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        child: YoutubePlayer(
-                        controller: iFrameController,
-                        aspectRatio: 16 / 9,
-                        ),
-                      ),
-                    ),
-                
-                    const Card(
-                      color:Colors.blueAccent,
-                      margin: EdgeInsets.all(30),
-                      elevation: 10, // 影の離れ具合
-                      shadowColor: Colors.grey, // 影の色
-                      child: Padding(
-                        padding: EdgeInsets.all(15.0),
-                        child: Center(
-                          child: Text(
-                            '・再生ボタンをクリックすると自動読み上げが始まります。\n\n・再生位置をクリックで調整はできません\n（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                
-                  ],
+      body: Stack(
+        children: <Widget>[
+
+          Column(
+            children: [
+              SizedBox(
+                child: YoutubePlayer(
+                controller: iFrameController,
+                aspectRatio: 16 / 9,
                 ),
-              )
+              ),
+
+              const SizedBox(height: 100),
+
+              Card(
+                color: isLoaded == false
+                ? Colors.red
+                : Colors.blueAccent,
+                margin: const EdgeInsets.all(30),
+                elevation: 10, // 影の離れ具合
+                shadowColor: Colors.red, // 影の色
+                child: Text(
+                  isLoaded == false
+                    ? 'ロード中!（再生ボタンをまだ押さないで）'
+                    : 'ロード完了!（再生ボタンを押してスタート！）',
+                  style: const TextStyle(
+                    fontSize: 50,
+                    color: Colors.white
+                  ),
+                ),
+              ),
+
             ],
+          )
+
+        ],
       ),
     );
   }

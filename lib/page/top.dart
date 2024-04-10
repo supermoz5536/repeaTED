@@ -23,197 +23,15 @@ class _LoungePageState extends ConsumerState<LoungePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController showDialogNameController = TextEditingController();
   final TextEditingController statementController = TextEditingController();
-  late final YoutubePlayerController iFrameController;
-  final FlutterTts tts = FlutterTts();
-  // var yt = YoutubeExplode();
-  var videoId = 'sYOS4qOHxdg';
-  // late ClosedCaptionManifest trackManifest;
-  late PairCaption pairCaption;
-  List<PairCaption>? pairCaptions = [];
-  bool? isUnStarted = false;
-  bool? isPlaying = false;
-  bool? isPaused = false;
-  bool? isLoading = true;
-  int? currentCaptionIndex = 0;
-  int? captionTrackLength;
-  dynamic captionsEn;
-  dynamic captionsJa;
-  double seekTime = 0.0;
-  double durationTime = 100.0;
 
 
   @override
   void initState() {
     super.initState();
-
-
-    // ■ YoutubePlayerControllerの初期化.
-    iFrameController = YoutubePlayerController.fromVideoId(
-      videoId: 'sYOS4qOHxdg',
-      params: const YoutubePlayerParams(
-        mute: false,
-        showControls: true,
-        showFullscreenButton: true,
-        enableCaption: true,
-        captionLanguage: 'en',
-      ),
-    );
-
-    // ■ TTSの初期化
-    initTTS();
-
-    // ■ キャプションデータのロード
-    // 実際のクローズドキャプショントラック（字幕データ）を非同期で取得します。
-    // get(trackInfo)メソッドは
-    // 指定した字幕トラック情報に基づいて字幕データを返します。
-    CloudFunctions.callGetCaptions(videoId).then((captions) {
-
-    // キャプションデータを Map<String, dynamic> にキャストする処理（アロー関数を使用せず）
-    captionsEn = captions!.en.map((caption) {
-      return Map<String, dynamic>.from(caption);
-    }).toList();
-
-    captionsJa = captions.ja.map((caption) {
-      return Map<String, dynamic>.from(caption);
-    }).toList();  
-
-    captionTrackLength = captions.ja.length;    
-
-    }).then((value) {
-      // ■ キャプションデータのロードを確実に完了してからリスナーを配置
-      print('リスナーの配置完了');
-      listenPlayer();
-      setState(() {
-        isLoading = false;  
-      });
-    });
   }
 
 
-  /// 各キャプションにおける自動処理の内容を記述
-  void listenPlayer() {
-      iFrameController.listen((event) async{
-        print(' ★ 1 リスナーイベントの取得確認 == ${iFrameController.value.playerState}');
-    
-      // // ■ 動画が読み込まれ、まだ再生されていない場合の処理
-      if (iFrameController.value.playerState == PlayerState.unStarted) {
-        if (isUnStarted == false) {
-          isUnStarted = true;
-          print('■ 1 PlayerState.unStarteのタスク開始');
-          // print('■ 3 動画の読み込み完了しましたが、まだ再生が開始されていません。');
-          // print('■ 4 JA Caption 取得確認: ${captionsJa[currentCaptionIndex]['start']}');
-          // print('■ 5 JA Caption start の型確認: ${captionsJa[currentCaptionIndex]['start'].runtimeType}');
-          // print('■ 6 JA Caption start の型確認: ${double.parse(captionsJa[currentCaptionIndex]['start']).runtimeType}');
-
-          // 'start'の値が文字列で数字表記になっているので
-          // 型のキャスト String → double
-          seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
-          // print('■ 7 seekTimeの値確認: $seekTime');
-
-          // 再生ポジションを現キャプションの開始時刻に移動し
-          await iFrameController.seekTo(
-            seconds: seekTime,
-            allowSeekAhead: true
-          );
-
-          // その後に再生
-          // await iFrameController.playVideo();
-        }
-    }
-
-      // ■ 動画が再生中の場合の処理
-      if (iFrameController.value.playerState == PlayerState.playing) {
-        if (isPlaying == false) {
-          isPlaying = true;
-          isUnStarted = false;
-          isPaused = false;  
-          print('▲ 0 currentCaptionIndex == $currentCaptionIndex');     
-          print('▲ 1 動画が再生中です。');
-          // print('▲ 2 該当キャプションの オブジェクトの確認: ${(captionsJa[currentCaptionIndex])}');
-          // print('▲ 3 該当キャプションの dur値の確認: ${(captionsJa[currentCaptionIndex]['dur'])}');
-          // 'dur'の値が文字列で数字表記になっているので
-          // 型のキャスト String → double
-          durationTime = double.parse(captionsJa[currentCaptionIndex]['dur']);
-          // print('▲ 4 durationTimeの代入後の値: ${(captionsJa[currentCaptionIndex]['dur'])}');
-          
-
-          // ② そのカウント後に停止メソッドが実行されるようにスケジュール
-          await Future.delayed(
-            // 第1引数
-            Duration(milliseconds: (durationTime * 1000).toInt()),
-            // 第2引数
-            () {iFrameController.pauseVideo();}
-          );
-          print('▲ 2 一時停止の予約完了 ');
-          print('▲ 3 currentCaptionIndex == $currentCaptionIndex');     
-        }
-      }
-    
-      // ■ 動画が一時停止された場合の処理
-      if (iFrameController.value.playerState == PlayerState.paused) {
-        if (isPaused == false) {
-          isPaused = true;
-          isPlaying = false;
-          print('● 0 currentCaptionIndex == $currentCaptionIndex');
-          print('● 1 動画が一時停止された状態');
-
-          // TTSでキャプションの読み上げ
-          await tts.speak(
-            captionsJa[currentCaptionIndex]['text'],
-          );
-        }
-      }
-    
-      // 動画が停止された場合の処理
-      if (currentCaptionIndex == captionTrackLength! - 1) {  
-        print('動画が終了した状態');
-        isUnStarted = false;
-        isPlaying = false;
-        isPaused = true;
-        currentCaptionIndex = 0;
-        seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
-
-        // 再生ポジションを現キャプションの開始時刻に移動し
-        await iFrameController.seekTo(
-          seconds: seekTime,
-          allowSeekAhead: true
-        );
-
-        // その後に再生
-        await iFrameController.playVideo();
-      }
-    });
-  }
-
-
-  Future<void> initTTS() async {
-    // 音量を70%に設定
-    await tts.setVolume(0.5); 
-
-    // 読み上げ完了時のコールバック設定
-    tts.setCompletionHandler(() async{
-      print("読み上げ完了後のコールバックが完了しました。");
-
-          currentCaptionIndex = currentCaptionIndex! + 1;
-
-          seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
-          print('● 3 キャスト完了');
-
-          // 再生ポジションを次のIndexのstartの時刻に変更
-          await iFrameController.seekTo(
-            seconds: seekTime - 0.5,
-            allowSeekAhead: true
-          );
-          print('● 4 再生ポジション移動');
-
-          // 再生をトリガー
-          await iFrameController.playVideo();
-          print('● 5 再生のトリガー完了');
-          print('● 6 currentCaptionIndex == $currentCaptionIndex');
-    });
   
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -663,47 +481,35 @@ class _LoungePageState extends ConsumerState<LoungePage> {
 
 
 
-      body: isLoading == true
-        ? const Center(child: CircularProgressIndicator()) // ローディング中はインジケーターを表示
-        : Stack(
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        child: YoutubePlayer(
-                        controller: iFrameController,
-                        aspectRatio: 16 / 9,
+      body: const Stack(
+        children: <Widget>[
+          SingleChildScrollView(
+            child: Column(
+              children: [
+            
+                Card(
+                  color:Colors.blueAccent,
+                  margin: EdgeInsets.all(30),
+                  elevation: 10, // 影の離れ具合
+                  shadowColor: Colors.grey, // 影の色
+                  child: Padding(
+                    padding: EdgeInsets.all(15.0),
+                    child: Center(
+                      child: Text(
+                        '・再生ボタンをクリックすると自動読み上げが始まります。\n\n・再生位置をクリックで調整はできません\n（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white
                         ),
                       ),
                     ),
-                
-                    const Card(
-                      color:Colors.blueAccent,
-                      margin: EdgeInsets.all(30),
-                      elevation: 10, // 影の離れ具合
-                      shadowColor: Colors.grey, // 影の色
-                      child: Padding(
-                        padding: EdgeInsets.all(15.0),
-                        child: Center(
-                          child: Text(
-                            '・再生ボタンをクリックすると自動読み上げが始まります。\n\n・再生位置をクリックで調整はできません\n（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                
-                  ],
+                  ),
                 ),
-              )
-            ],
+            
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

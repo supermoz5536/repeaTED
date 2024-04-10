@@ -5,6 +5,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:repea_ted/firebase_options.dart';
 import 'package:repea_ted/page/lounge.dart';
+import 'package:repea_ted/page/lounge_2.dart';
 
 
 void main() async {
