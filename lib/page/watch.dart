@@ -1,4 +1,7 @@
 // import 'dart:ffi';
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,45 +9,256 @@ import 'package:repea_ted/cloud_functions/functions.dart';
 import 'package:repea_ted/model/caption_tracks.dart';
 import 'package:repea_ted/model/linked_captions.dart';
 import 'package:repea_ted/model/watch_%20constructor.dart';
-import 'package:repea_ted/page/watch.dart';
+import 'package:repea_ted/page/top.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 // import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-class TopPage extends ConsumerStatefulWidget {
-  const TopPage({super.key});
+class WatchPage extends ConsumerStatefulWidget {
+  final WatchConstructor? watchConstructor;
+  const WatchPage(this.watchConstructor, {super.key});
 
   @override
-  ConsumerState<TopPage> createState() => _LoungePageState();
+  ConsumerState<WatchPage> createState() => _LoungePageState();
 }
 
-class _LoungePageState extends ConsumerState<TopPage> {
-  bool isInputEmpty = true;
-  String? url;
-  String? videoId;
+class _LoungePageState extends ConsumerState<WatchPage> {
   // final _overlayController1st = OverlayPortalController();
   // final _overlayController2nd = OverlayPortalController();
   // final TextEditingController nameController = TextEditingController();
   // final TextEditingController showDialogNameController = TextEditingController();
   // final TextEditingController statementController = TextEditingController();
-  final TextEditingController urlTextController = TextEditingController();
+  late final YoutubePlayerController iFrameController;
+  final FlutterTts tts = FlutterTts();
+  // var yt = YoutubeExplode();
+  String? videoId;
+  // late ClosedCaptionManifest trackManifest;
+  late PairCaption pairCaption;
+  List<PairCaption>? pairCaptions = [];
+  bool? isUnStarted = false;
+  bool? isPlaying = false;
+  bool? isPaused = false;
+  bool? isLoading = true;
+  bool? isFullscreen = false;
+  int? currentCaptionIndex = 0;
+  int? captionTrackLength;
+  dynamic captionsEn;
+  dynamic captionsJa;
+  double seekTime = 0.0;
+  double durationTime = 100.0;
+  StreamSubscription? iFrameSubscription;
 
 
   @override
   void initState() {
     super.initState();
+    videoId = widget.watchConstructor!.videoId;
+
+    // ■ YoutubePlayerControllerの初期化.
+    iFrameController = YoutubePlayerController.fromVideoId(
+      videoId: videoId!,
+      params: const YoutubePlayerParams(
+        mute: false,
+        showControls: true,
+        showFullscreenButton: true,
+        enableCaption: true,
+        captionLanguage: 'en',
+      ),
+    );
+
+    // ■ TTSの初期化
+    initTTS();
+
+    // ■ キャプションデータのロード
+    // 実際のクローズドキャプショントラック（字幕データ）を非同期で取得します。
+    // get(trackInfo)メソッドは
+    // 指定した字幕トラック情報に基づいて字幕データを返します。
+    CloudFunctions.callGetCaptions(videoId).then((captions) {
+
+    // キャプションデータを Map<String, dynamic> にキャストする処理（アロー関数を使用せず）
+    captionsEn = captions!.en.map((caption) {
+      return Map<String, dynamic>.from(caption);
+    }).toList();
+
+    captionsJa = captions.ja.map((caption) {
+      return Map<String, dynamic>.from(caption);
+    }).toList();  
+
+    captionTrackLength = captions.ja.length;    
+    print('captionTrackLength == $captionTrackLength');
+
+    }).then((value) {
+      // ■ キャプションデータのロードを確実に完了してからリスナーを配置
+      print('リスナーの配置完了');
+      listenPlayer();
+      setState(() {
+        isLoading = false;  
+      });
+    });
   }
 
+
+  /// 各キャプションにおける自動処理の内容を記述
+  void listenPlayer() {
+      iFrameSubscription = iFrameController.listen((event) async{
+        print(' ★ 1 リスナーイベントの取得確認 == ${iFrameController.value.playerState}');
+    
+      // // ■ 動画が読み込まれ、まだ再生されていない場合の処理
+      if (iFrameController.value.playerState == PlayerState.unStarted) {
+        if (isUnStarted == false) {
+          isUnStarted = true;
+          print('■ 1 PlayerState.unStarteのタスク開始');
+          // print('■ 3 動画の読み込み完了しましたが、まだ再生が開始されていません。');
+          // print('■ 4 JA Caption 取得確認: ${captionsJa[currentCaptionIndex]['start']}');
+          // print('■ 5 JA Caption start の型確認: ${captionsJa[currentCaptionIndex]['start'].runtimeType}');
+          // print('■ 6 JA Caption start の型確認: ${double.parse(captionsJa[currentCaptionIndex]['start']).runtimeType}');
+
+          // 'start'の値が文字列で数字表記になっているので
+          // 型のキャスト String → double
+          seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+          // print('■ 7 seekTimeの値確認: $seekTime');
+
+          // 再生ポジションを現キャプションの開始時刻に移動し
+          await iFrameController.seekTo(
+            seconds: seekTime,
+            allowSeekAhead: true
+          );
+
+          // その後に再生
+          // await iFrameController.playVideo();
+        }
+    }
+
+      // ■ 動画が再生中の場合の処理
+      if (iFrameController.value.playerState == PlayerState.playing) {
+        if (isPlaying == false) {
+          isPlaying = true;
+          isUnStarted = false;
+          isPaused = false;  
+          print('▲ 0 currentCaptionIndex == $currentCaptionIndex');     
+          print('▲ 1 動画が再生中です。');
+          // print('▲ 2 該当キャプションの オブジェクトの確認: ${(captionsJa[currentCaptionIndex])}');
+          // print('▲ 3 該当キャプションの dur値の確認: ${(captionsJa[currentCaptionIndex]['dur'])}');
+          // 'dur'の値が文字列で数字表記になっているので
+          // 型のキャスト String → double
+          durationTime = double.parse(captionsJa[currentCaptionIndex]['dur']);
+          // print('▲ 4 durationTimeの代入後の値: ${(captionsJa[currentCaptionIndex]['dur'])}');
+          
+
+          // ② そのカウント後に停止メソッドが実行されるようにスケジュール
+          await Future.delayed(
+            // 第1引数
+            Duration(milliseconds: (durationTime * 950).toInt()),
+            // 第2引数
+            () {iFrameController.pauseVideo();}
+          );
+          print('▲ 2 一時停止の予約完了 ');
+          print('▲ 3 currentCaptionIndex == $currentCaptionIndex');     
+        }
+      }
+    
+      // ■ 動画が一時停止された場合の処理
+      if (iFrameController.value.playerState == PlayerState.paused) {
+        if (isPaused == false) {
+          isPaused = true;
+          isPlaying = false;
+          print('● 0 currentCaptionIndex == $currentCaptionIndex');
+          print('● 1 動画が一時停止された状態');
+
+          // TTSでキャプションの読み上げ
+          await tts.speak(
+            captionsJa[currentCaptionIndex]['text'],
+          );
+        }
+      }
+    
+      // // ■ 動画が停止された場合の処理
+      // if (currentCaptionIndex == captionTrackLength! - 1) {  
+      //   print('動画が終了した状態');
+      //   isUnStarted = false;
+      //   isPlaying = false;
+      //   isPaused = true;
+      //   currentCaptionIndex = 0;
+      //   seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+
+      //   // 再生ポジションを現キャプションの開始時刻に移動し
+      //   await iFrameController.seekTo(
+      //     seconds: seekTime,
+      //     allowSeekAhead: true
+      //   );
+
+      //   // その後に再生
+      //   await iFrameController.playVideo();
+      // }
+    });
+  }
+
+
+
+
+  Future<void> initTTS() async {
+    // 音量を70%に設定
+    await tts.setVolume(0.5); 
+
+    // 読み上げ完了時のコールバック設定
+    tts.setCompletionHandler(() async{
+      print("読み上げ完了後のコールバックが完了しました。");
+
+          currentCaptionIndex = currentCaptionIndex! + 1;
+
+          if (currentCaptionIndex! < captionTrackLength!){
+            seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+            print('● 3 キャスト完了');
+
+            // 再生ポジションを次のIndexのstartの時刻に変更
+            await iFrameController.seekTo(
+              seconds: seekTime - 0.2,
+              allowSeekAhead: true
+            );
+            print('● 4 再生ポジション移動');
+
+            // 再生をトリガー
+            await iFrameController.playVideo();
+            print('● 5 再生のトリガー完了');
+            print('● 6 currentCaptionIndex == $currentCaptionIndex');
+          }
+
+          else if (currentCaptionIndex == captionTrackLength) {
+            print('動画が終了した状態');
+            print('● 7 currentCaptionIndex == $currentCaptionIndex');
+            isUnStarted = false;
+            isPlaying = false;
+            isPaused = true;
+            currentCaptionIndex = 0;
+            seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+
+            // 再生ポジションを現キャプションの開始時刻に移動し
+            await iFrameController.seekTo(
+              seconds: seekTime,
+              allowSeekAhead: true
+            );
+
+            // その後に再生
+            await iFrameController.playVideo();
+          }
+    });
+  
+  }
+
+    // disposeメソッドをオーバーライド
   @override
   void dispose() {
     // showDialogNameController.removeListener(() {setState((){});});
     // showDialogNameController.dispose();
     // nameController.dispose();
     // statementController.dispose();
-    urlTextController.dispose();
+    if (iFrameSubscription != null) iFrameSubscription!.cancel();
+    // iFrameController.close();  // iFrameの .disposeメソッドはwebだとバグが潜在してる可能性がある
+    tts.stop();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +278,7 @@ class _LoungePageState extends ConsumerState<TopPage> {
         shadowColor: Colors.black.withOpacity(0.7),
         surfaceTintColor: Colors.transparent,
         bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(0),
+            preferredSize: Size.fromHeight(15),
             child: Divider(
               color: Colors.white,
               height: 0,
@@ -495,163 +709,90 @@ class _LoungePageState extends ConsumerState<TopPage> {
 
 
 
-      body: Stack(
-        children: <Widget>[
-          SingleChildScrollView(
-            child: Column(
-              children: [
+      body: isLoading == true
+        ? const Center(child: CircularProgressIndicator()) // ローディング中はインジケーターを表示
+        : Stack(
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    children: [
+                  
+                      const SizedBox(height: 30),
 
-                const SizedBox(height: 30),
-
-                Row(
-                  children: [
-                    
-                  // ■ 入力フィールド
-                  Expanded(
-                    child: Padding(
-                    // 入力フィールドの枠の大きさ    
-                      padding: const EdgeInsets.only(
-                        top: 30,
-                        left: 30,
-                        right: 0,
-                        bottom: 30), 
-                      child: TextField(
-                        controller: urlTextController, 
-                        onChanged: (value) {
-                          // TextFiledのテキスト変更をリスンして
-                          // 空白かどうかを確認して再描画
-                          setState(() {
-                            isInputEmpty = value.isEmpty;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 244, 241, 241),
-                          contentPadding: EdgeInsets.only(left: 10),
-                          border: InputBorder.none,
-                          hintText: 'Youtube動画のURLをココに入力'
-                        ),
-                        // [Enterキー]のコールバックを指定するプロパティ
-                        onSubmitted: (_) async{
-                          if (isInputEmpty != true ) {
-                            url = urlTextController.text;
-                            videoId = extractVideoId(url);
-                            if (videoId != null && context.mounted ) {
-                              WatchConstructor watchConstructor = 
-                                WatchConstructor(videoId: videoId);
-                              /// 画面遷移に必要なコンストラクタ
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(builder: (context)
-                                  => WatchPage(watchConstructor)),
-                                (_) => false);
-                            }
+                      // Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   child: SizedBox(
+                      //     child: YoutubePlayer(
+                      //     controller: iFrameController,
+                      //     aspectRatio: 16 / 9,
+                      //     ),
+                      //   ),
+                      // ),
+                  
+                      SizedBox(
+                        height: 300, // 通常モード時の高さ
+                        width: 800,
+                          child: YoutubePlayer(
+                          controller: iFrameController,
+                          ),
+                      ),
+                  
+                      const SizedBox(height: 15),
+                  
+                      ElevatedButton(
+                        onPressed: () {                        
+                          if (context.mounted) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const TopPage()),
+                            );
                           }
                         },
+                        child: const Text('戻る',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold
+                          ),
+                        )
                       ),
-                    )),
-
-                  // ■ 送信アイコン
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 30
-                    ),
-                    child: IconButton(
-                        onPressed: urlTextController.text.isEmpty
-                        ? null
-                        : () async {
-                          if (isInputEmpty != true ) {
-                            url = urlTextController.text;
-                            videoId = extractVideoId(url);
-                            if (videoId != null && context.mounted ) {
-                              WatchConstructor watchConstructor = 
-                                WatchConstructor(videoId: videoId);
-                              /// 画面遷移に必要なコンストラクタ
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(builder: (context)
-                                  => WatchPage(watchConstructor)),
-                                (_) => false);
-                            }
-                          }
-                        },
-                        icon: Icon(
-                          Icons.open_in_new_outlined,
-                          color: isInputEmpty ? Colors.grey : Colors.blue,
-                        )),
-                  ),
-                  ],
-                ),
-
-                const Card(
-                  color:Colors.blueAccent,
-                  margin: EdgeInsets.all(30),
-                  elevation: 10, // 影の離れ具合
-                  shadowColor: Colors.grey, // 影の色
-                  child: Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Center(
-                      child: Text(
-                        '・英語のYoutube動画で、同時通訳者のように日本語を自動で読み上げるアプリです。\n\n・ユーザーが作成した日本語字幕のある動画でのみで利用できます。\n\n・字幕のない動画URLを入力すると読み込みができないです。\n\n・作業中に流しっぱで聞いていると結構リスニング力が上がります。',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white
+                  
+                      const SizedBox(
+                        height: 275,
+                        width: 800,
+                        child: Card(
+                          color:Colors.blueAccent,
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: 30,
+                            right: 30,
+                            bottom: 30,
+                          ),
+                          elevation: 10, // 影の離れ具合
+                          shadowColor: Colors.grey, // 影の色
+                          child: Padding(
+                            padding: EdgeInsets.all(15.0),
+                            child: Center(
+                              child: Text(
+                                '・自動で動画の再生が始まります、始まらない時は再生ボタンをクリック。\n\n・再生位置をクリックで調整はできません（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                  
+                    ],
                   ),
                 ),
-            
-              ],
-            ),
-          )
-        ],
+              )
+            ],
       ),
     );
   }
-
-
-/// String型のurlを引数として受け取り、文字列を返します。
-String? extractVideoId(String? url) {
-
-  // RegExpクラスを用いて、
-  // YouTube URLからビデオIDを抽出するパターンに
-  // マッチする正規表現オブジェクト regExp を生成します。
-  // 二つのマッチパターンがあります。
-
-  // '[&?]v=([^&]+)' は
-  // Youtubeの通常のURL形式を扱います。
-  // 'v=' 以降の文字列において、
-  // 次の&文字が出現するか、
-  // URLの末尾に到達するまでの部分にマッチします。
-
-  // 'be/(.+)$' は
-  // Youtubeの短縮URL形式を扱います。
-  // 'be/' 以降の文字列において、
-  // 次の&文字が出現するか、
-  // URLの末尾に到達するまでの部分にマッチしま
-  final RegExp regExp = RegExp(r'[&?]v=([^&]+)|be/(.+)$');
-
-  // 作成した正規表現オブジェクトを用いて、
-  // 引数のurl文字列に対する最初のマッチを検索し、
-  // 結果をmatchに格納します。
-  // Match型は、
-  // マッチした文字列の具体的な内容、
-  // マッチした部分の位置（インデックス）、
-  // および正規表現内で区分けられた各グループに関する情報を提供します。
-  final Match? match = regExp.firstMatch(url!);
-
-  if (match != null && match.groupCount >= 1) {
-    // 最初のグループが空でない場合、それを使用
-    if (match.group(1) != null) {
-      return match.group(1)!;
-    }
-  }
-  // マッチしない場合、空の文字列を返す
-  return null;
-
-  }
-
 }
 
 
