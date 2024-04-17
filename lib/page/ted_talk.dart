@@ -1,32 +1,30 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repea_ted/model/top_page_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
 import 'package:repea_ted/page/watch.dart';
-import 'package:repea_ted/riverpod/provider/recommend_list_provider.dart';
 import 'package:repea_ted/service/global_overlay_portal.dart';
-import 'package:repea_ted/service/load_%20thumbnail.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class TopPage extends ConsumerStatefulWidget {
+class TedTalkPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? topConstructor;
-  const TopPage(this.topConstructor, {super.key});
+  const TedTalkPage(this.topConstructor, {super.key});
 
   @override
-  ConsumerState<TopPage> createState() => _LoungePageState();
+  ConsumerState<TedTalkPage> createState() => _TedTalkPageState();
 }
 
-class _LoungePageState extends ConsumerState<TopPage> {
+class _TedTalkPageState extends ConsumerState<TedTalkPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
-  List<Video?>? recommendList = [];
-  Future<List<Video?>?>? futureRecommendList;
+  List<Video?>? loadedList = [];
+  Future<List<Video?>?>? futureList;
   int? mobileItemCount = 30;
   int? desktopItemCount = 33;
-  // final GlobalKey<State<StatefulWidget>> customOverlayKey_1 = GlobalKey();
+  // final GlobalKey<State<StatefulWidget>> customOverlayKey_2 = GlobalKey();
   final _overlayController1st = OverlayPortalController();
   // final _overlayController2nd = OverlayPortalController();
   // final TextEditingController nameController = TextEditingController();
@@ -35,25 +33,19 @@ class _LoungePageState extends ConsumerState<TopPage> {
   final TextEditingController urlTextController = TextEditingController();
 
 
-
   @override
   void initState() {
     super.initState();
 
-      // main.dartからの画面遷移の場合(0)のみ
-      // おすすめ動画リストの初期化処理を実行
-      if (widget.topConstructor!.flagNumber == 0) {
-        futureRecommendList = Video.loadTedTalk().then((result) {
-          if (result != null) {
-            result.shuffle();
-            // シャッフルしたリストの先頭の100要素を取得
-            var shuffledResult = result.take(100).toList();
-            // プロバイダーを更新
-            ref.read(recommendListProvider.notifier)
-             .setShuffledRecommendList(shuffledResult);
-          }
-       });
-      }
+      futureList = Video.loadTedTalk();
+      // .then((result) {
+      //   if (result != null) {
+      //     setState(() {
+      //       loadedList = result;            
+      //     });
+      //   }
+      // });
+      
      // 日本語スクリプトのない動画URLでWatchPageから戻ってきた場合
      if (widget.topConstructor!.flagNumber == -1) {
        WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,14 +67,13 @@ class _LoungePageState extends ConsumerState<TopPage> {
 
   @override
   Widget build(BuildContext context) {
-  List<Video?>? recommendList= ref.watch(recommendListProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 1
+          flagNumber: 2
         ),
         title: const Text('repeaTED（リピーテッド）BETA版',
           style: TextStyle(
@@ -674,7 +665,7 @@ class _LoungePageState extends ConsumerState<TopPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        '本日おすすめの人気TED',
+                        'TEDx Talkの動画一覧',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -687,108 +678,107 @@ class _LoungePageState extends ConsumerState<TopPage> {
               ),
 
               // ■ ギャラリー
-                FutureBuilder(
-                  future: futureRecommendList,
-                  builder: (BuildContext context, futureSnapshot) {
-                    if (futureSnapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
-                    } else if (futureSnapshot.hasError) {
-                      return const SizedBox.shrink();
-                    } else {            
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.width < 600
-                            // 「各動画の高さ」 x 「動画数」 + 「上部の静的な領域の高さ」
-                            ? 225 * mobileItemCount!.toDouble()
-                            // MediaQuery.of(context).size.width / 400 で横が何列か算出します
-                            // desktopItemCountを横の列数で割って、縦１列あたりの動画数を算出します
-                            // 算出した縦１列あたりの動画数に、1つあたり動画の高さをかけて、全体の高さを算出します。,
-                            : ((desktopItemCount!.toDouble() / 3) + 4) * 257,
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: MediaQuery.of(context).size.width < 600
-                            ? mobileItemCount
-                            : desktopItemCount,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: MediaQuery.of(context).size.width < 600
-                            ? 1
-                            : 3, 
-                            childAspectRatio: 16 / 9, // アスペクト比
-                          ),
-                          itemBuilder: (BuildContext context, int index)  {
-                            String? exractedTitle = Utility.extractTitle(recommendList![index]);
-                            String? extractedSpeakerName = Utility.extractSpeakerName(recommendList[index]);
-                            
-                            
-                      
-                            return Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: GridTile(
-                                footer: GridTileBar(
-                                  backgroundColor: Colors.black45,
-                                  title: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const SizedBox(height: 4,),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            exractedTitle ?? '',
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold
-                                            ),),
-                                        ),
+              FutureBuilder(
+                future: futureList,
+                builder: (context, futureSnapshot) {
+                  if (futureSnapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox.shrink();
+                  } else if (futureSnapshot.hasError) {
+                    return const SizedBox.shrink();
+                  } else {                    
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.width < 600
+                          // 「各動画の高さ」 x 「動画数」 + 「上部の静的な領域の高さ」
+                          ? 225 * mobileItemCount!.toDouble()
+                          // MediaQuery.of(context).size.width / 400 で横が何列か算出します
+                          // desktopItemCountを横の列数で割って、縦１列あたりの動画数を算出します
+                          // 算出した縦１列あたりの動画数に、1つあたり動画の高さをかけて、全体の高さを算出します。,
+                          : ((desktopItemCount!.toDouble() / 3) + 4) * 257,
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: MediaQuery.of(context).size.width < 600
+                          ? mobileItemCount
+                          : desktopItemCount,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: MediaQuery.of(context).size.width < 600
+                          ? 1
+                          : 3, 
+                          childAspectRatio: 16 / 9, // アスペクト比
+                        ),
+                        itemBuilder: (BuildContext context, int index)  {
+                          String? exractedTitle =  Utility.extractTitle(futureSnapshot.data![index]);
+                          String? extractedSpeakerName = Utility.extractSpeakerName(futureSnapshot.data![index]);
+
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: GridTile(
+                              footer: GridTileBar(
+                                backgroundColor: Colors.black45,
+                                title: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(height: 4,),
+                                    Flexible(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(
+                                          exractedTitle ?? '',
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold
+                                          ),),
                                       ),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            extractedSpeakerName ?? '',
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold
-                                            ),),
-                                        ),
+                                    ),
+                                    Flexible(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(
+                                          extractedSpeakerName ?? '',
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold
+                                          ),),
                                       ),
-                                      const SizedBox(height: 4,)
-                                    ],
-                                  ),
-                                ),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: Ink(
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: NetworkImage('https://img.youtube.com/vi/${recommendList[index]!.videoId}/0.jpg'),
-                                                  fit: BoxFit.cover
-                                              )
-                                          ),
-                                        child: InkWell(
-                                          hoverColor: Colors.white.withOpacity(0.3),
-                                          splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-                                          onTap: () {
-                                            WatchPageConstructor watchConstructor = 
-                                              WatchPageConstructor(videoId: recommendList[index]!.videoId);
-                                            /// 画面遷移に必要なコンストラクタ
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(builder: (context)
-                                                => WatchPage(watchConstructor)),
-                                              (_) => false);
-                                          },
-                                          child: const SizedBox(width: 400, height: 225),
-                                          // InkWellの有効範囲はchildのWidgetの範囲に相当するので
-                                          // タップの有効領域確保のために、空のSizedBoxを設定
-                                        ),
-                                      )
+                                    ),
+                                    const SizedBox(height: 4,)
+                                  ],
                                 ),
                               ),
-                            );
-                          }),
-                      );
-                  }
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage('https://img.youtube.com/vi/${futureSnapshot.data![index]!.videoId}/0.jpg'),
+                                          fit: BoxFit.cover)),
+                                          
+                                  // BoxFith は画像の表示方法の制御
+                                  // cover は満遍なく埋める
+                                  child: InkWell(
+                                    hoverColor: Colors.white.withOpacity(0.3),
+                                    splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
+                                    onTap: () {
+                                      WatchPageConstructor watchConstructor = 
+                                        WatchPageConstructor(videoId: futureSnapshot.data![index]!.videoId);
+                                      /// 画面遷移に必要なコンストラクタ
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(builder: (context)
+                                          => WatchPage(watchConstructor)),
+                                        (_) => false);
+                                    },
+                                    child: const SizedBox(width: 400, height: 225),
+                                    // InkWellの有効範囲はchildのWidgetの範囲に相当するので
+                                    // タップの有効領域確保のために、空のSizedBoxを設定
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                    );
+                }
               }),
             ],
           )
@@ -843,8 +833,12 @@ class _LoungePageState extends ConsumerState<TopPage> {
         ),
       ),
       backgroundColor:const Color.fromARGB(255, 44, 44, 44),
+      // backgroundColor:Color.fromARGB(255, 94, 94, 94),
     );
   }
 
 }
+
+
+
 
