@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:repea_ted/firebase_options.dart';
+import 'package:repea_ted/model/top_page_constructor.dart';
 import 'package:repea_ted/page/watch.dart';
 import 'package:repea_ted/page/top.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends ConsumerWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+  PageTransitionConstructor? constructor = PageTransitionConstructor(flagNumber: 0);
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -34,7 +36,7 @@ class MyApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TopPage(),
+      home: TopPage(constructor),
     );
   }
 }

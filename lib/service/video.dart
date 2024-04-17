@@ -28,22 +28,21 @@ class Video {
 
   /// TEDx Talk.json のdataから
   /// List<Video>?型のオブジェクトを生成する関数です。
-  static Future<List<Video>?> loadVideos() async {
+  static Future<List<Video>?> loadTedTalk() async {
     try {
-      final String? response = await rootBundle.loadString('assets/videos/TEDx Talk.json');
+      final String response = await rootBundle.loadString('assets/ted_talk.json');
       // リストの各要素に対して型キャストを行う場合は、
       // asキーワードをmap()メソッド内で各アイテムに適用する必要があります。
       // なのでjsonDecodeの出力時にはキャストできません
-      if (response != null) {
-        final List<dynamic> data = jsonDecode(response!) as List;
+      final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
-      } else {
-        return null;
-      }
     } catch (error) {
-      print('loadVideosの実行失敗: jsonファイルからのVideoオブジェクトの変換取得に失敗しました');
+      print('loadVideosの実行失敗  ==  $error');
       return null;
     }
   }
+
+
+
 }
 

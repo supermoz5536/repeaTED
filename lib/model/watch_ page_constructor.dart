@@ -1,9 +1,9 @@
 
-class WatchConstructor {
+class WatchPageConstructor {
   String? videoId;
 
 
-  WatchConstructor({
+  WatchPageConstructor({
     required this.videoId,
   });
 }
