@@ -43,16 +43,44 @@ static String? extractVideoId(String? url) {
 }
 
 
+
   static String? extractTitle(Video? videoObject) {
     String? extractedTitle;
       extractedTitle = videoObject!.titleJa!.split(RegExp(r':|：')).last.trim();
       return extractedTitle;
   }
 
-  static  String? extractSpeakerName(Video? videoObject) {
+
+
+  static String? extractSpeakerName(Video? videoObject) {
     String? extractedSpeakerName;
       extractedSpeakerName = videoObject!.titleJa!.split(RegExp(r':|：')).first.trim();
       return extractedSpeakerName;
   }
 
+
+
+  static List<List<Video?>?>? splitToPagedList(List<Video?>? wholeItems) {
+    List<List<Video?>?>? pagedList = [];
+    int? itemsPerPage = 33;
+      // 配列の最後の値を超えるまで
+      // indexを30ずつ加算してループ処理を行います
+      for (int i = 0; i < wholeItems!.length; i = i + itemsPerPage ) {
+        pagedList.add(
+          wholeItems.sublist(
+            i, i + itemsPerPage < wholeItems.length
+            ? i + itemsPerPage
+            : wholeItems.length,
+          )
+        );
+      }
+      return pagedList;
+  }
+
+
+
+
+
+
 }
+

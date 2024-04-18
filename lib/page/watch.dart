@@ -8,8 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repea_ted/cloud_functions/functions.dart';
 import 'package:repea_ted/model/caption_tracks.dart';
 import 'package:repea_ted/model/linked_captions.dart';
-import 'package:repea_ted/model/top_page_constructor.dart';
+import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
+import 'package:repea_ted/page/original_content.dart';
+import 'package:repea_ted/page/ted_ed.dart';
+import 'package:repea_ted/page/ted_institute_talk.dart';
+import 'package:repea_ted/page/ted_salon_talk.dart';
+import 'package:repea_ted/page/ted_stage_talk.dart';
+import 'package:repea_ted/page/ted_talk.dart';
 import 'package:repea_ted/page/top.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -42,6 +48,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   bool? isPaused = false;
   bool? isLoading = true;
   bool? isFullscreen = false;
+  int? flagNumber;
+  int? currentPageIndex;
   int? currentCaptionIndex = 0;
   int? captionTrackLength;
   dynamic captionsEn;
@@ -55,6 +63,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   void initState() {
     super.initState();
     videoId = widget.watchConstructor!.videoId;
+    flagNumber = widget.watchConstructor!.flagNumber;
+    currentPageIndex = widget.watchConstructor!.currentPageIndex;
 
     // ■ YoutubePlayerControllerの初期化.
     iFrameController = YoutubePlayerController.fromVideoId(
@@ -79,7 +89,10 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
       // キャプションの取得に失敗したらトップページへ画面遷移
       if (captions == null && context.mounted) {
-        PageTransitionConstructor? constructor = PageTransitionConstructor(flagNumber: -1);
+        PageTransitionConstructor? constructor = PageTransitionConstructor(
+                                                   flagNumber: -1,
+                                                   currentPageIndex: 0
+                                                 );
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => TopPage(constructor)),
@@ -756,11 +769,70 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                       ElevatedButton(
                         onPressed: () {                        
                           if (context.mounted) {
-                            PageTransitionConstructor? constructor = PageTransitionConstructor(flagNumber: 1);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => TopPage(constructor)),
-                            );
+                              Widget nextPage;
+
+                              switch (flagNumber) {
+                                case 1:
+                                  nextPage = TopPage(PageTransitionConstructor(
+                                    flagNumber: 1,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 2:
+                                  nextPage = TedStageTalkPage(PageTransitionConstructor(
+                                    flagNumber: 2,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 3:
+                                  nextPage = TedEdPage(PageTransitionConstructor(
+                                    flagNumber: 3,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 4:
+                                  nextPage = TedTalkPage(PageTransitionConstructor(
+                                    flagNumber: 4,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 5:
+                                  nextPage = TedInstituteTalkPage(PageTransitionConstructor(
+                                    flagNumber: 5,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 6:
+                                  nextPage = TedSalonTalkPage(PageTransitionConstructor(
+                                    flagNumber: 6,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+                                case 7:
+                                  nextPage = OriginalContentPage(PageTransitionConstructor(
+                                    flagNumber: 7,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                default:
+                                  nextPage = TopPage(PageTransitionConstructor(
+                                    flagNumber: 1,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+                              }
+
+                              Navigator.pushReplacement(  
+                                context,
+                                MaterialPageRoute(builder: (context) => nextPage),
+                              );
+
                           }
                         },
                         child: const Text('戻る',

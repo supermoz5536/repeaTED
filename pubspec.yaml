@@ -85,7 +85,13 @@ flutter:
     # アセットをアプリケーションに追加する
   assets:
     - assets/icon.png
+    - assets/recommend.json
+    - assets/ted_stage_talk.json
+    - assets/ted_ed.json
     - assets/ted_talk.json
+    - assets/ted_institute_talk.json
+    - assets/ted_salon_talk.json
+    - assets/original_content.json
 
 
   # To add assets to your application, add an assets section, like this:

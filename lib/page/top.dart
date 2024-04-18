@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:repea_ted/model/top_page_constructor.dart';
+import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
 import 'package:repea_ted/page/watch.dart';
 import 'package:repea_ted/riverpod/provider/recommend_list_provider.dart';
 import 'package:repea_ted/service/global_overlay_portal.dart';
-import 'package:repea_ted/service/load_%20thumbnail.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
 class TopPage extends ConsumerStatefulWidget {
-  final PageTransitionConstructor? topConstructor;
-  const TopPage(this.topConstructor, {super.key});
+  final PageTransitionConstructor? transitionConstructor;
+  const TopPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<TopPage> createState() => _LoungePageState();
+  ConsumerState<TopPage> createState() => _TopPageState();
 }
 
-class _LoungePageState extends ConsumerState<TopPage> {
+class _TopPageState extends ConsumerState<TopPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
-  List<Video?>? recommendList = [];
-  Future<List<Video?>?>? futureRecommendList;
-  int? mobileItemCount = 30;
-  int? desktopItemCount = 33;
-  // final GlobalKey<State<StatefulWidget>> customOverlayKey_1 = GlobalKey();
+  List<Video?>? recommendList;
+  Future<List<Video?>?>? futureList;
+  List<Video?>? wholeItems = [];
+  List<List<Video?>?>? pagedList = [];
+  int? currentPageIndex = 0;
+  int defaultItemCoutPerPage = 33;
+  // final GlobalKey<State<StatefulWidget>> customOverlayKey_2 = GlobalKey();
   final _overlayController1st = OverlayPortalController();
   // final _overlayController2nd = OverlayPortalController();
   // final TextEditingController nameController = TextEditingController();
@@ -35,32 +36,34 @@ class _LoungePageState extends ConsumerState<TopPage> {
   final TextEditingController urlTextController = TextEditingController();
 
 
-
   @override
   void initState() {
     super.initState();
+      currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      // main.dartからの画面遷移の場合(0)のみ
-      // おすすめ動画リストの初期化処理を実行
-      if (widget.topConstructor!.flagNumber == 0) {
-        futureRecommendList = Video.loadTedTalk().then((result) {
-          if (result != null) {
-            result.shuffle();
-            // シャッフルしたリストの先頭の100要素を取得
-            var shuffledResult = result.take(100).toList();
-            // プロバイダーを更新
-            ref.read(recommendListProvider.notifier)
-             .setShuffledRecommendList(shuffledResult);
-          }
-       });
-      }
+      Video.loadRecommend().then((result) {
+        if (result != null) {
+          result.shuffle();
+          // シャッフルしたリストの先頭の100要素を取得
+          var shuffledResult = result.take(33).toList();
+          // プロバイダーを更新
+          ref.read(recommendListProvider.notifier)
+            .setShuffledRecommendList(shuffledResult);
+        }
+        return null;
+      });
+      
      // 日本語スクリプトのない動画URLでWatchPageから戻ってきた場合
-     if (widget.topConstructor!.flagNumber == -1) {
+     if (widget.transitionConstructor!.flagNumber == -1) {
        WidgetsBinding.instance.addPostFrameCallback((_) {
          ScaffoldMessenger.of(context).showSnackBar(customSnackBar()); 
        });
      } 
+
+
+
   }
+
 
 
   @override
@@ -75,14 +78,15 @@ class _LoungePageState extends ConsumerState<TopPage> {
 
   @override
   Widget build(BuildContext context) {
-  List<Video?>? recommendList= ref.watch(recommendListProvider);
+    recommendList= ref.watch(recommendListProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 1
+          flagNumber: 1,
+          currentPageIndex: currentPageIndex,
         ),
         title: const Text('repeaTED（リピーテッド）BETA版',
           style: TextStyle(
@@ -544,7 +548,8 @@ class _LoungePageState extends ConsumerState<TopPage> {
                       top: 30,
                       left: 30,
                       right: 0,
-                      bottom: 30), 
+                      bottom: 30
+                    ), 
                     child: TextField(
                       controller: urlTextController, 
                       onChanged: (value) {
@@ -568,7 +573,11 @@ class _LoungePageState extends ConsumerState<TopPage> {
                           videoId = Utility.extractVideoId(url);
                           if (videoId != null && context.mounted ) {
                             WatchPageConstructor watchConstructor = 
-                              WatchPageConstructor(videoId: videoId);
+                              WatchPageConstructor(
+                                videoId: videoId,
+                                flagNumber: 1,
+                                currentPageIndex: currentPageIndex
+                              );
                             /// 画面遷移に必要なコンストラクタ
                             Navigator.pushAndRemoveUntil(
                               context,
@@ -596,7 +605,11 @@ class _LoungePageState extends ConsumerState<TopPage> {
                           videoId = Utility.extractVideoId(url);
                           if (videoId != null && context.mounted ) {
                             WatchPageConstructor watchConstructor = 
-                              WatchPageConstructor(videoId: videoId);
+                              WatchPageConstructor(
+                                videoId: videoId,
+                                flagNumber: 1,
+                                currentPageIndex: currentPageIndex
+                              );
                             /// 画面遷移に必要なコンストラクタ
                             Navigator.pushAndRemoveUntil(
                               context,
@@ -637,7 +650,7 @@ class _LoungePageState extends ConsumerState<TopPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                      '・英語のYoutube動画を同時通訳者のように自動で日本語に読み上げるアプリです。\n\n・作業中などに流しっぱにして、英語の音に意識を向けながら繰り返し聞いてると、リスニング力が上がります。\n\n・ユーザー作成の日本語字幕のあるYoutube動画なら、上の検索バーから動画URLを入力して直接利用できます。',
+                      '・英語のYoutube動画を同時通訳者のように自動で日本語に読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、Youtube動画のURLを入力して利用できます。\n\n・作業中などに流しっぱにして聞いてください。\n\n・英語の音に意識を向けて繰り返し聞いてるとリスニング力が上がります。',
                         style: TextStyle(
                           color: Colors.white,
                           // fontWeight: FontWeight.bold,
@@ -656,7 +669,7 @@ class _LoungePageState extends ConsumerState<TopPage> {
                   top:30,
                   left: 30,
                   right: 30,
-                  bottom: 30,
+                  bottom: 15,
                 ),
                 child: Container(
                   decoration: const BoxDecoration(
@@ -687,117 +700,107 @@ class _LoungePageState extends ConsumerState<TopPage> {
               ),
 
               // ■ ギャラリー
-                FutureBuilder(
-                  future: futureRecommendList,
-                  builder: (BuildContext context, futureSnapshot) {
-                    if (futureSnapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
-                    } else if (futureSnapshot.hasError) {
-                      return const SizedBox.shrink();
-                    } else {            
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.width < 600
-                            // 「各動画の高さ」 x 「動画数」 + 「上部の静的な領域の高さ」
-                            ? 225 * mobileItemCount!.toDouble()
-                            // MediaQuery.of(context).size.width / 400 で横が何列か算出します
-                            // desktopItemCountを横の列数で割って、縦１列あたりの動画数を算出します
-                            // 算出した縦１列あたりの動画数に、1つあたり動画の高さをかけて、全体の高さを算出します。,
-                            : ((desktopItemCount!.toDouble() / 3) + 4) * 257,
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: MediaQuery.of(context).size.width < 600
-                            ? mobileItemCount
-                            : desktopItemCount,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: MediaQuery.of(context).size.width < 600
-                            ? 1
-                            : 3, 
-                            childAspectRatio: 16 / 9, // アスペクト比
-                          ),
-                          itemBuilder: (BuildContext context, int index)  {
-                            String? exractedTitle = Utility.extractTitle(recommendList![index]);
-                            String? extractedSpeakerName = Utility.extractSpeakerName(recommendList[index]);
-                            
-                            
-                      
-                            return Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: GridTile(
-                                footer: GridTileBar(
-                                  backgroundColor: Colors.black45,
-                                  title: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const SizedBox(height: 4,),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Center(
+              recommendList == null 
+              ? const SizedBox.shrink()
+              : recommendList!.isEmpty
+                ? const SizedBox.shrink()
+                : Center(
+                  child: Wrap(
+                      spacing: 8, // 水平方向のスペース
+                      runSpacing: 8, // 垂直方向のスペース
+                      children: List<Widget>.generate(recommendList!.length, (index) {
+                          Video? currentVideo = recommendList![index];
+                          String? exractedTitle =  Utility.extractTitle(currentVideo);
+                          String? extractedSpeakerName = Utility.extractSpeakerName(currentVideo);
+                  
+                        return Material(
+                          color: Colors.transparent,
+                          child: Ink(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: NetworkImage('https://img.youtube.com/vi/${currentVideo!.videoId}/0.jpg'),
+                                    fit: BoxFit.cover)),              
+                            // BoxFith は画像の表示方法の制御
+                            // cover は満遍なく埋める
+                            child: InkWell(
+                              hoverColor: Colors.white.withOpacity(0.3),
+                              splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
+                              onTap: () {
+                                WatchPageConstructor watchConstructor = 
+                                  WatchPageConstructor(
+                                    videoId: currentVideo.videoId,
+                                    flagNumber: 1,
+                                    currentPageIndex: currentPageIndex
+                                  );
+                                /// 画面遷移に必要なコンストラクタ
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context)
+                                    => WatchPage(watchConstructor)),
+                                  (_) => false);
+                              },
+                              child: SizedBox(
+                                width: 400, // 任意の幅
+                                height: 225, // 任意の高さ
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                      top: 4,
+                                      left: 16,
+                                      right: 16,
+                                      bottom: 4,
+                                    ),
+                                    width: double.infinity,
+                                    color: Colors.black45, // 薄いグレーの背景
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min, // 子ウィジェットのサイズに合わせて高さを調整
+                                      crossAxisAlignment: CrossAxisAlignment.start, // 左揃え
+                                      children: [
+                                        Center(
                                           child: Text(
                                             exractedTitle ?? '',
                                             style: const TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.bold
-                                            ),),
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                            ),
+                                            // 長いテキストは省略
+                                            overflow: TextOverflow.ellipsis, 
+                                          ),
                                         ),
-                                      ),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Center(
+                                        Center(
                                           child: Text(
                                             extractedSpeakerName ?? '',
                                             style: const TextStyle(
                                               fontSize: 13,
-                                              fontWeight: FontWeight.bold
-                                            ),),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4,)
-                                    ],
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: Ink(
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: NetworkImage('https://img.youtube.com/vi/${recommendList[index]!.videoId}/0.jpg'),
-                                                  fit: BoxFit.cover
-                                              )
-                                          ),
-                                        child: InkWell(
-                                          hoverColor: Colors.white.withOpacity(0.3),
-                                          splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-                                          onTap: () {
-                                            WatchPageConstructor watchConstructor = 
-                                              WatchPageConstructor(videoId: recommendList[index]!.videoId);
-                                            /// 画面遷移に必要なコンストラクタ
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(builder: (context)
-                                                => WatchPage(watchConstructor)),
-                                              (_) => false);
-                                          },
-                                          child: const SizedBox(width: 400, height: 225),
-                                          // InkWellの有効範囲はchildのWidgetの範囲に相当するので
-                                          // タップの有効領域確保のために、空のSizedBoxを設定
-                                        ),
-                                      )
-                                ),
                               ),
-                            );
-                          }),
-                      );
-                  }
-              }),
-            ],
-          )
-        ],
-      ),
-    );
-  }
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                ),
 
+              const SizedBox(height: 100)
 
+            ])
+          ]
+        )
+      );
+    }
+              
+    
   SnackBar customSnackBar() {
     return SnackBar(
       duration: const Duration(milliseconds: 3500),
@@ -843,8 +846,9 @@ class _LoungePageState extends ConsumerState<TopPage> {
         ),
       ),
       backgroundColor:const Color.fromARGB(255, 44, 44, 44),
+      // backgroundColor:Color.fromARGB(255, 94, 94, 94),
     );
   }
 
-}
 
+  }

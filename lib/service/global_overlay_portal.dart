@@ -1,6 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:repea_ted/model/top_page_constructor.dart';
+import 'package:repea_ted/model/page_transition_constructor.dart';
+import 'package:repea_ted/page/original_content.dart';
+import 'package:repea_ted/page/ted_ed.dart';
+import 'package:repea_ted/page/ted_institute_talk.dart';
+import 'package:repea_ted/page/ted_salon_talk.dart';
+import 'package:repea_ted/page/ted_stage_talk.dart';
 import 'package:repea_ted/page/ted_talk.dart';
 import 'package:repea_ted/page/top.dart';
 
@@ -8,20 +13,13 @@ import 'package:repea_ted/page/top.dart';
 class CustomOverlayPortal extends StatelessWidget {
   final OverlayPortalController? customController;
   final int? flagNumber; 
-    // const CustomOverlayPortal({Key? key, this.flagNumber}) : super(key: key);
-    // const CustomOverlayPortal({super.key});
+  final int? currentPageIndex; 
   const CustomOverlayPortal({
     required this.customController,
     required this.flagNumber,
+    required this.currentPageIndex,
     super.key
   });
-
-//   @override
-//   State<CustomOverlayPortal> createState() => _CustomOverlayPortalState();
-// }
-
-// class _CustomOverlayPortalState extends State<CustomOverlayPortal> {
-
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +57,9 @@ class CustomOverlayPortal extends StatelessWidget {
         Positioned(
           top: screenSize.height * 0.15, // 画面高さの15%の位置から開始
           left: screenSize.width * 0.1, // 画面幅の5%の位置から開始
-          height: screenSize.height * 0.7, // 画面高さの30%の高さ
+          height: MediaQuery.of(context).size.width < 600
+            ? screenSize.height * 0.8 // 画面幅の90%の幅
+            : 600,
           width: MediaQuery.of(context).size.width < 600
             ? screenSize.width * 0.8 // 画面幅の90%の幅
             : 350,
@@ -120,7 +120,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: '本日のおすすめ人気動画',
+                                text: '本日のおすすめ人気TED',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -130,8 +130,10 @@ class CustomOverlayPortal extends StatelessWidget {
                                   ..onTap = () {
                                     if (flagNumber != 1 && context.mounted) {  
                                       PageTransitionConstructor? constructor =
-                                        PageTransitionConstructor(flagNumber: 1);
-                                      // Navigator.push(
+                                        PageTransitionConstructor(
+                                          flagNumber: 1,
+                                          currentPageIndex: 0
+                                        );
                                       Navigator.pushReplacement(  
                                         context,
                                         MaterialPageRoute(builder: (context) => TopPage(constructor)),
@@ -146,7 +148,7 @@ class CustomOverlayPortal extends StatelessWidget {
                     ),
                   ),
 
-                  // ■ TED Talk
+                  // ■ TED Stage Talk
                   Padding(
                     padding: const EdgeInsets.only(top: 30),
                     child: Row(
@@ -171,7 +173,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: 'TEDx Talk(ローカル開催)',
+                                text: 'TED ステージトーク',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -181,8 +183,116 @@ class CustomOverlayPortal extends StatelessWidget {
                                   ..onTap = () {
                                     if (flagNumber != 2 && context.mounted) {
                                       PageTransitionConstructor? constructor =
-                                        PageTransitionConstructor(flagNumber: 2);
-                                      // Navigator.push(
+                                       PageTransitionConstructor(
+                                          flagNumber: 2,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => TedStageTalkPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ TED-ed
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'TED-Ed (教育系)',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 3 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                       PageTransitionConstructor(
+                                          flagNumber: 3,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => TedEdPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ TEDx Talk
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'TEDx Talk(コラボ開催)',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 4 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                       PageTransitionConstructor(
+                                          flagNumber: 4,
+                                          currentPageIndex: 0
+                                        );
                                       Navigator.pushReplacement(  
                                         context,
                                         MaterialPageRoute(builder: (context) => TedTalkPage(constructor)),
@@ -197,6 +307,164 @@ class CustomOverlayPortal extends StatelessWidget {
                     ),
                   ),
 
+                  // ■ TED Institute Talk
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Institute(ビジネス系)',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 5 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                       PageTransitionConstructor(
+                                          flagNumber: 5,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => TedInstituteTalkPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ TED Salon Talk
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'サロントーク(少人数開催)',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 6 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                       PageTransitionConstructor(
+                                          flagNumber: 6,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => TedSalonTalkPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ Original Content
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'オリジナルコンテンツ',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 7 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                       PageTransitionConstructor(
+                                          flagNumber: 7,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => OriginalContentPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
 
                 ],
               )

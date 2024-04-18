@@ -4,28 +4,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
 import 'package:repea_ted/page/watch.dart';
+import 'package:repea_ted/riverpod/provider/recommend_list_provider.dart';
 import 'package:repea_ted/service/global_overlay_portal.dart';
+import 'package:repea_ted/service/load_%20thumbnail.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class TedTalkPage extends ConsumerStatefulWidget {
+class TopPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const TedTalkPage(this.transitionConstructor, {super.key});
+  const TopPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<TedTalkPage> createState() => _TedTalkPageState();
+  ConsumerState<TopPage> createState() => _TopPageState();
 }
 
-class _TedTalkPageState extends ConsumerState<TedTalkPage> {
+class _TopPageState extends ConsumerState<TopPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
-  Future<List<Video?>?>? futureList;
-  List<Video?>? wholeItems = [];
-  List<List<Video?>?>? pagedList = [];
-  int? currentPageIndex = 0;
-  int defaultItemCoutPerPage = 33;
-  // final GlobalKey<State<StatefulWidget>> customOverlayKey_2 = GlobalKey();
+  List<Video?>? recommendList = [];
+  Future<List<Video?>?>? futureRecommendList;
+  int? mobileItemCount = 30;
+  int? desktopItemCount = 33;
+  // final GlobalKey<State<StatefulWidget>> customOverlayKey_1 = GlobalKey();
   final _overlayController1st = OverlayPortalController();
   // final _overlayController2nd = OverlayPortalController();
   // final TextEditingController nameController = TextEditingController();
@@ -34,32 +35,32 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
   final TextEditingController urlTextController = TextEditingController();
 
 
+
   @override
   void initState() {
     super.initState();
-    currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadTedTalk().then((result) {
-        if (result != null) {
-          setState(() {
-            wholeItems = result;
-            pagedList = Utility.splitToPagedList(result);  
-          });
-        }
-        return null;
-      });
-      
+      // main.dartからの画面遷移の場合(0)のみ
+      // おすすめ動画リストの初期化処理を実行
+      if (widget.transitionConstructor!.flagNumber == 0) {
+        futureRecommendList = Video.loadRecommend().then((result) {
+          if (result != null) {
+            result.shuffle();
+            // シャッフルしたリストの先頭の100要素を取得
+            var shuffledResult = result.take(100).toList();
+            // プロバイダーを更新
+            ref.read(recommendListProvider.notifier)
+             .setShuffledRecommendList(shuffledResult);
+          }
+       });
+      }
      // 日本語スクリプトのない動画URLでWatchPageから戻ってきた場合
      if (widget.transitionConstructor!.flagNumber == -1) {
        WidgetsBinding.instance.addPostFrameCallback((_) {
          ScaffoldMessenger.of(context).showSnackBar(customSnackBar()); 
        });
      } 
-
-
-
   }
-
 
 
   @override
@@ -74,14 +75,15 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
 
   @override
   Widget build(BuildContext context) {
+  List<Video?>? recommendList= ref.watch(recommendListProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 4,
-          currentPageIndex: currentPageIndex,
+          flagNumber: 1,
+          currentPageIndex: 0,
         ),
         title: const Text('repeaTED（リピーテッド）BETA版',
           style: TextStyle(
@@ -543,8 +545,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                       top: 30,
                       left: 30,
                       right: 0,
-                      bottom: 30
-                    ), 
+                      bottom: 30), 
                     child: TextField(
                       controller: urlTextController, 
                       onChanged: (value) {
@@ -570,8 +571,8 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 4,
-                                currentPageIndex: currentPageIndex
+                                flagNumber: 1,
+                                currentPageIndex: 0
                               );
                             /// 画面遷移に必要なコンストラクタ
                             Navigator.pushAndRemoveUntil(
@@ -602,8 +603,8 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 4,
-                                currentPageIndex: currentPageIndex
+                                flagNumber: 1,
+                                currentPageIndex: 0
                               );
                             /// 画面遷移に必要なコンストラクタ
                             Navigator.pushAndRemoveUntil(
@@ -664,7 +665,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                   top:30,
                   left: 30,
                   right: 30,
-                  bottom: 15,
+                  bottom: 30,
                 ),
                 child: Container(
                   decoration: const BoxDecoration(
@@ -682,7 +683,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'TEDx Talkの動画一覧',
+                        '本日おすすめの人気TED',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -694,464 +695,122 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                 ),
               ),
 
-
-              // ■ ページネーション
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 30,
-                  bottom: 15
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                
-                    // ■ 「前のページ」を表示する
-                    // 最初のページではない場合のみ
-                    currentPageIndex == 0
-                      ? const SizedBox(
-                        height: 100,
-                        width: 140,
-                      )
-                
-                      : Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.lightBlueAccent,
-                            ),
-                            child: InkWell(
-                              hoverColor: Colors.white.withOpacity(0.3),
-                              splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-                              onTap: () {
-                                setState(() {
-                                  currentPageIndex = currentPageIndex! - 1;  
-                                });
-                              },
-                              child: const SizedBox(
-                                height: 100,
-                                width: 140,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Icon(Icons.arrow_back_ios_outlined,
-                                        color: Colors.white,
-                                        size: 50,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 4),
-                                      child: Text('前のページ',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                
-                    const SizedBox(width: 20),
-                      
-                
-                    // ■ 「次のページ」を表示する
-                    // 最後のページではない場合のみ
-                    // 配列の17番目のアイテムのindexは[16]
-                    // なぜなら、
-                    // 個数は1から数えるが
-                    // indexは[0]から数えるから
-                    currentPageIndex == pagedList!.length - 1
-                      ? const SizedBox(
-                        height: 100,
-                        width: 140,
-                      )
-                
-                      : Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.lightBlueAccent,
-                            ),
-                            child: InkWell(
-                              hoverColor: Colors.white.withOpacity(0.3),
-                              splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-                              onTap: () {
-                                setState(() {
-                                  currentPageIndex = currentPageIndex! + 1;  
-                                });
-                              },
-                              child: const SizedBox(
-                                height: 100,
-                                width: 140,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Icon(Icons.arrow_forward_ios_outlined,
-                                        color: Colors.white,
-                                        size: 50,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 4),
-                                      child: Text('次のページ',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                ),
-              ),
-
-
-
-
-              // ■ 検索表示数
-              Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: Center(
-                  child: RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      ),
-                      children: [
-
-                        TextSpan(text: '${wholeItems!.length}'),
-                        
-                        const WidgetSpan(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(
-                              '件中',
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 13
-                              )
-                            ),
-                          ),
-                        ),
-
-                        TextSpan(text: '${defaultItemCoutPerPage * (currentPageIndex!) + 1}'),
-
-                        const TextSpan(text: '〜'),
-
-                        TextSpan(text: currentPageIndex != pagedList!.length - 1
-                          // 最後のページ以外は指定した要素数 / 1ページ
-                          ? '${defaultItemCoutPerPage * (currentPageIndex! + 1)}'
-                          // 最後のページは、要素数にばらつきが出るので
-                          // 現在のページ数のindex番号を計算して、要素数を取得する
-                          : '${(defaultItemCoutPerPage * currentPageIndex!)
-                                  + (pagedList![pagedList!.length -1]!.length)}'
-                        ),
-
-                        const WidgetSpan(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(
-                              '件表示',
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 13
-                              )
-                            ),
-                          ),
-                        ),
-
-                      ]
-                    )
-                  ),
-                ),
-              ),
-
-
-
-
               // ■ ギャラリー
-              pagedList == null 
-              ? const SizedBox.shrink()
-              : pagedList!.isEmpty
-                ? const SizedBox.shrink()
-                : Center(
-                  child: Wrap(
-                      spacing: 8, // 水平方向のスペース
-                      runSpacing: 8, // 垂直方向のスペース
-                      children: List<Widget>.generate(pagedList![currentPageIndex!]!.length, (index) {
-                          Video? currentVideo = pagedList![currentPageIndex!]![index];
-                          String? exractedTitle =  Utility.extractTitle(currentVideo);
-                          String? extractedSpeakerName = Utility.extractSpeakerName(currentVideo);
-                  
-                        return Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: NetworkImage('https://img.youtube.com/vi/${currentVideo!.videoId}/0.jpg'),
-                                    fit: BoxFit.cover)),              
-                            // BoxFith は画像の表示方法の制御
-                            // cover は満遍なく埋める
-                            child: InkWell(
-                              hoverColor: Colors.white.withOpacity(0.3),
-                              splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-                              onTap: () {
-                                WatchPageConstructor watchConstructor = 
-                                  WatchPageConstructor(
-                                    videoId: currentVideo.videoId,
-                                    flagNumber: 4,
-                                    currentPageIndex: currentPageIndex
-                                  );
-                                /// 画面遷移に必要なコンストラクタ
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(builder: (context)
-                                    => WatchPage(watchConstructor)),
-                                  (_) => false);
-                              },
-                              child: SizedBox(
-                                width: 400, // 任意の幅
-                                height: 225, // 任意の高さ
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Container(
-                                    padding: const EdgeInsets.only(
-                                      top: 4,
-                                      left: 16,
-                                      right: 16,
-                                      bottom: 4,
-                                    ),
-                                    width: double.infinity,
-                                    color: Colors.black45, // 薄いグレーの背景
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min, // 子ウィジェットのサイズに合わせて高さを調整
-                                      crossAxisAlignment: CrossAxisAlignment.start, // 左揃え
-                                      children: [
-                                        Center(
+                FutureBuilder(
+                  future: futureRecommendList,
+                  builder: (BuildContext context, futureSnapshot) {
+                    if (futureSnapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                    } else if (futureSnapshot.hasError) {
+                      return const SizedBox.shrink();
+                    } else {            
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.width < 600
+                            // 「各動画の高さ」 x 「動画数」 + 「上部の静的な領域の高さ」
+                            ? 225 * mobileItemCount!.toDouble()
+                            // MediaQuery.of(context).size.width / 400 で横が何列か算出します
+                            // desktopItemCountを横の列数で割って、縦１列あたりの動画数を算出します
+                            // 算出した縦１列あたりの動画数に、1つあたり動画の高さをかけて、全体の高さを算出します。,
+                            : ((desktopItemCount!.toDouble() / 3) + 4) * 257,
+                        child: GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: MediaQuery.of(context).size.width < 600
+                            ? mobileItemCount
+                            : desktopItemCount,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: MediaQuery.of(context).size.width < 600
+                            ? 1
+                            : 3, 
+                            childAspectRatio: 16 / 9, // アスペクト比
+                          ),
+                          itemBuilder: (BuildContext context, int index)  {
+                            String? exractedTitle = Utility.extractTitle(recommendList![index]);
+                            String? extractedSpeakerName = Utility.extractSpeakerName(recommendList[index]);
+                            
+                            
+                      
+                            return Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: GridTile(
+                                footer: GridTileBar(
+                                  backgroundColor: Colors.black45,
+                                  title: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SizedBox(height: 4,),
+                                      Flexible(
+                                        flex: 1,
+                                        child: Center(
                                           child: Text(
                                             exractedTitle ?? '',
                                             style: const TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                            ),
-                                            // 長いテキストは省略
-                                            overflow: TextOverflow.ellipsis, 
-                                          ),
+                                              fontWeight: FontWeight.bold
+                                            ),),
                                         ),
-                                        Center(
+                                      ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: Center(
                                           child: Text(
                                             extractedSpeakerName ?? '',
                                             style: const TextStyle(
                                               fontSize: 13,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                              fontWeight: FontWeight.bold
+                                            ),),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4,)
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                ),
-
-
-              // ■ 検索表示数
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: Center(
-                  child: RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      ),
-                      children: [
-
-                        TextSpan(text: '${wholeItems!.length}'),
-                        
-                        const WidgetSpan(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(
-                              '件中',
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 13
-                              )
-                            ),
-                          ),
-                        ),
-
-                        TextSpan(text: '${defaultItemCoutPerPage * (currentPageIndex!) + 1}'),
-
-                        const TextSpan(text: '〜'),
-
-                        TextSpan(text: currentPageIndex != pagedList!.length - 1
-                          // 最後のページ以外は指定した要素数 / 1ページ
-                          ? '${defaultItemCoutPerPage * (currentPageIndex! + 1)}'
-                          // 最後のページは、要素数にばらつきが出るので
-                          // 現在のページ数のindex番号を計算して、要素数を取得する
-                          : '${(defaultItemCoutPerPage * currentPageIndex!)
-                                  + (pagedList![pagedList!.length -1]!.length)}'
-                        ),
-
-                        const WidgetSpan(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(
-                              '件表示',
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 13
-                              )
-                            ),
-                          ),
-                        ),
-
-                      ]
-                    )
-                  ),
-                ),
-              ),
-
-
-
-
-              // ■ ページネーション
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                
-                    // ■ 「前のページ」を表示する
-                    // 最初のページではない場合のみ
-                    currentPageIndex == 0
-                      ? const SizedBox(
-                        height: 100,
-                        width: 140,
-                      )
-                
-                      : Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.lightBlueAccent,
-                            ),
-                            child: InkWell(
-                              hoverColor: Colors.white.withOpacity(0.3),
-                              splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-                              onTap: () {
-                                setState(() {
-                                  currentPageIndex = currentPageIndex! - 1;  
-                                });
-                              },
-                              child: const SizedBox(
-                                height: 100,
-                                width: 140,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Icon(Icons.arrow_back_ios_outlined,
-                                        color: Colors.white,
-                                        size: 50,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 4),
-                                      child: Text('前のページ',
-                                        style: TextStyle(
-                                          color: Colors.white,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: Ink(
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: NetworkImage('https://img.youtube.com/vi/${recommendList[index]!.videoId}/0.jpg'),
+                                                  fit: BoxFit.cover
+                                              )
+                                          ),
+                                        child: InkWell(
+                                          hoverColor: Colors.white.withOpacity(0.3),
+                                          splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
+                                          onTap: () {
+                                            WatchPageConstructor watchConstructor = 
+                                              WatchPageConstructor(
+                                                videoId: recommendList[index]!.videoId,
+                                                flagNumber: 1,
+                                                currentPageIndex: 0
+                                              );
+                                            /// 画面遷移に必要なコンストラクタ
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(builder: (context)
+                                                => WatchPage(watchConstructor)),
+                                              (_) => false);
+                                          },
+                                          child: const SizedBox(width: 400, height: 225),
+                                          // InkWellの有効範囲はchildのWidgetの範囲に相当するので
+                                          // タップの有効領域確保のために、空のSizedBoxを設定
                                         ),
-                                      ),
-                                    ),
-                                  ],
+                                      )
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
-                
-                    const SizedBox(width: 20),
-                      
-                
-                    // ■ 「次のページ」を表示する
-                    // 最後のページではない場合のみ
-                    // 配列の17番目のアイテムのindexは[16]
-                    // なぜなら、
-                    // 個数は1から数えるが
-                    // indexは[0]から数えるから
-                    currentPageIndex == pagedList!.length - 1
-                      ? const SizedBox(
-                        height: 100,
-                        width: 140,
-                      )
-                
-                      : Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.lightBlueAccent,
-                            ),
-                            child: InkWell(
-                              hoverColor: Colors.white.withOpacity(0.3),
-                              splashColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.3),
-                              onTap: () {
-                                setState(() {
-                                  currentPageIndex = currentPageIndex! + 1;  
-                                });
-                              },
-                              child: const SizedBox(
-                                height: 100,
-                                width: 140,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Icon(Icons.arrow_forward_ios_outlined,
-                                        color: Colors.white,
-                                        size: 50,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 4),
-                                      child: Text('次のページ',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                ),
-              ),
+                            );
+                          }),
+                      );
+                  }
+              }),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
-            ])
-          ]
-        )
-      );
-    }
-              
-    
+
   SnackBar customSnackBar() {
     return SnackBar(
       duration: const Duration(milliseconds: 3500),
@@ -1197,9 +856,8 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
         ),
       ),
       backgroundColor:const Color.fromARGB(255, 44, 44, 44),
-      // backgroundColor:Color.fromARGB(255, 94, 94, 94),
     );
   }
 
+}
 
-  }
