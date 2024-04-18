@@ -5,9 +5,11 @@ class PageTransitionConstructor {
   // 0: main.dartからの遷移
   
   int? flagNumber;
+  int? currentPageIndex;
 
 
   PageTransitionConstructor({
     required this.flagNumber,
+    required this.currentPageIndex,
   });
 }

@@ -8,15 +8,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class TedTalkPage extends ConsumerStatefulWidget {
+class TedEdPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const TedTalkPage(this.transitionConstructor, {super.key});
+  const TedEdPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<TedTalkPage> createState() => _TedTalkPageState();
+  ConsumerState<TedEdPage> createState() => _TedEdPageState();
 }
 
-class _TedTalkPageState extends ConsumerState<TedTalkPage> {
+class _TedEdPageState extends ConsumerState<TedEdPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -37,9 +37,9 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
   @override
   void initState() {
     super.initState();
-    currentPageIndex = widget.transitionConstructor!.currentPageIndex;
+      currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadTedTalk().then((result) {
+      futureList = Video.loadTedEd().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -80,7 +80,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 4,
+          flagNumber: 3,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('repeaTED（リピーテッド）BETA版',
@@ -570,7 +570,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 4,
+                                flagNumber: 3,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -602,7 +602,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 4,
+                                flagNumber: 3,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -682,7 +682,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'TEDx Talkの動画一覧',
+                        'Ted-Ed(教育系)の一覧',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -906,7 +906,7 @@ class _TedTalkPageState extends ConsumerState<TedTalkPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 4,
+                                    flagNumber: 3,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ
