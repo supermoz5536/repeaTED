@@ -29,7 +29,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
   PageTransitionConstructor? constructor =  PageTransitionConstructor(
-                                              flagNumber: 1,
+                                              flagNumber: 0,
                                               currentPageIndex: 0
                                             );
 

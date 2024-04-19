@@ -41,6 +41,7 @@ class _TopPageState extends ConsumerState<TopPage> {
     super.initState();
       currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
+      if (widget.transitionConstructor!.flagNumber == 0) {
       Video.loadRecommend().then((result) {
         if (result != null) {
           result.shuffle();
@@ -52,6 +53,7 @@ class _TopPageState extends ConsumerState<TopPage> {
         }
         return null;
       });
+      }
       
      // 日本語スクリプトのない動画URLでWatchPageから戻ってきた場合
      if (widget.transitionConstructor!.flagNumber == -1) {
