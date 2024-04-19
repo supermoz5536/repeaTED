@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
+import 'package:repea_ted/analytics/custom_analytics.dart';
 import 'package:repea_ted/firebase_options.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
-import 'package:repea_ted/page/watch.dart';
 import 'package:repea_ted/page/top.dart';
 
 
@@ -13,7 +13,7 @@ void main() async {
   // splashの設定のために変数に格納して、メソッドの引数にしてる 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
-
+  await CustomAnalytics.logMainIn();
   runApp(DevicePreview(
     enabled: !kReleaseMode,
     builder: (context) => const ProviderScope(child: MyApp()),
@@ -34,7 +34,7 @@ class MyApp extends ConsumerWidget {
                                             );
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'repeaTED',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
