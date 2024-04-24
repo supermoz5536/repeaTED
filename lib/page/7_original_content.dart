@@ -39,7 +39,7 @@ class _OriginalContentPageState extends ConsumerState<OriginalContentPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadTedSalonTalk().then((result) {
+      futureList = Video.loadOriginalContent().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -644,13 +644,28 @@ class _OriginalContentPageState extends ConsumerState<OriginalContentPage> {
                   child: const Padding(
                     padding: EdgeInsets.all(15.0),
                     child: Center(
-                      child: Text(
-                      '・英語のYoutube動画を同時通訳者のように自動で日本語に読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、Youtube動画のURLを入力して利用できます。\n\n・作業中などに流しっぱにして聞いてください。\n\n・英語の音に意識を向けて繰り返し聞いてるとリスニング力が上がります。',
-                        style: TextStyle(
-                          color: Colors.white,
-                          // fontWeight: FontWeight.bold,
-                          fontSize: 15
-                        ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 15),
+                            child: Text(
+                            '- 使い方 -',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30
+                              ),
+                            ),
+                          ),    
+                          Text(
+                          '・日本語字幕のある英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、Youtube動画のURLを入力して利用できます。\n\n・作業中などに流しっぱにして聞いてください。\n\n・英語の音に意識を向けて繰り返し聞いてるとリスニング力が上がります。',
+                            style: TextStyle(
+                              color: Colors.white,
+                              // fontWeight: FontWeight.bold,
+                              fontSize: 15
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -686,7 +701,7 @@ class _OriginalContentPageState extends ConsumerState<OriginalContentPage> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 25
+                          fontSize: 20
                         ),
                       ),
                     ),

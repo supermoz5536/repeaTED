@@ -59,6 +59,12 @@ static String? extractVideoId(String? url) {
   }
 
 
+  static String? extractChannelName(Video? videoObject) {
+    String? extractedChannelName;
+      extractedChannelName = videoObject!.channel;
+      return extractedChannelName;
+  }
+
 
   static List<List<Video?>?>? splitToPagedList(List<Video?>? wholeItems) {
     List<List<Video?>?>? pagedList = [];
