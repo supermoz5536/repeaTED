@@ -8,15 +8,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class TedInstituteTalkPage extends ConsumerStatefulWidget {
+class TedEdPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const TedInstituteTalkPage(this.transitionConstructor, {super.key});
+  const TedEdPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<TedInstituteTalkPage> createState() => _TedInstituteTalkPageState();
+  ConsumerState<TedEdPage> createState() => _TedEdPageState();
 }
 
-class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
+class _TedEdPageState extends ConsumerState<TedEdPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -39,7 +39,7 @@ class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
     super.initState();
       currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadTedInstituteTalk().then((result) {
+      futureList = Video.loadTedEd().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -80,7 +80,7 @@ class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 5,
+          flagNumber: 3,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('repeaTED（リピーテッド）BETA版',
@@ -570,7 +570,7 @@ class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 5,
+                                flagNumber: 3,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -602,7 +602,7 @@ class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 5,
+                                flagNumber: 3,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -644,13 +644,28 @@ class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
                   child: const Padding(
                     padding: EdgeInsets.all(15.0),
                     child: Center(
-                      child: Text(
-                      '・英語のYoutube動画を同時通訳者のように自動で日本語に読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、Youtube動画のURLを入力して利用できます。\n\n・作業中などに流しっぱにして聞いてください。\n\n・英語の音に意識を向けて繰り返し聞いてるとリスニング力が上がります。',
-                        style: TextStyle(
-                          color: Colors.white,
-                          // fontWeight: FontWeight.bold,
-                          fontSize: 15
-                        ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 15),
+                            child: Text(
+                            '- 使い方 -',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30
+                              ),
+                            ),
+                          ),    
+                          Text(
+                          '・日本語字幕のある英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、Youtube動画のURLを入力して利用できます。\n\n・作業中などに流しっぱにして聞いてください。\n\n・英語の音に意識を向けて繰り返し聞いてるとリスニング力が上がります。',
+                            style: TextStyle(
+                              color: Colors.white,
+                              // fontWeight: FontWeight.bold,
+                              fontSize: 15
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -682,7 +697,7 @@ class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'Institute Talkの一覧',
+                        'Ted-Ed(教育系)の一覧',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -906,7 +921,7 @@ class _TedInstituteTalkPageState extends ConsumerState<TedInstituteTalkPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 5,
+                                    flagNumber: 3,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ

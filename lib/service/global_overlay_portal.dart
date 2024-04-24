@@ -1,13 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
-import 'package:repea_ted/page/original_content.dart';
-import 'package:repea_ted/page/ted_ed.dart';
-import 'package:repea_ted/page/ted_institute_talk.dart';
-import 'package:repea_ted/page/ted_salon_talk.dart';
-import 'package:repea_ted/page/ted_stage_talk.dart';
-import 'package:repea_ted/page/ted_talk.dart';
-import 'package:repea_ted/page/top.dart';
+import 'package:repea_ted/page/7_original_content.dart';
+import 'package:repea_ted/page/3_ted_ed.dart';
+import 'package:repea_ted/page/5_ted_institute_talk.dart';
+import 'package:repea_ted/page/6_ted_salon_talk.dart';
+import 'package:repea_ted/page/2_ted_stage_talk.dart';
+import 'package:repea_ted/page/4_ted_talk.dart';
+import 'package:repea_ted/page/1_top.dart';
+import 'package:repea_ted/page/8_tabi_eats.dart';
 
 
 class CustomOverlayPortal extends StatelessWidget {
@@ -455,6 +456,59 @@ class CustomOverlayPortal extends StatelessWidget {
                                       Navigator.pushReplacement(  
                                         context,
                                         MaterialPageRoute(builder: (context) => OriginalContentPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ Tabi Eats
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Tabi Eats',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 8 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                       PageTransitionConstructor(
+                                          flagNumber: 8,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => TabiEatsPage(constructor)),
                                       );
                                     }
                                   }

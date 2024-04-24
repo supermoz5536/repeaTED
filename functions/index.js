@@ -1,9 +1,9 @@
 const functions = require("firebase-functions");
 const {getSubtitles} = require("youtube-captions-scraper");
 
-exports.getCaptions = functions.https.onCall(async (data, context) => {
+exports.getCaptionsJa = functions.https.onCall(async (data, context) => {
   const videoId = data.videoId;
-  const languages = ["en", "ja"];
+  const languages = ["ja"];
   // 異なる言語コードをキーとして、
   // それぞれの言語に対応する字幕データ（配列形式）を
   // 値として持たせるため

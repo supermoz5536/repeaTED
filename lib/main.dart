@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:repea_ted/analytics/custom_analytics.dart';
 import 'package:repea_ted/firebase_options.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
-import 'package:repea_ted/page/top.dart';
+import 'package:repea_ted/page/1_top.dart';
 
 
 void main() async {
