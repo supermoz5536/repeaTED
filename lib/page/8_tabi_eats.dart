@@ -963,6 +963,7 @@ class _TabiEatsState extends ConsumerState<TabiEatsPage> {
                                         ),
                                         Center(
                                           child: Text(
+//　■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ 定数の入力　■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
                                             'Tabi Eats' ?? '',
                                             style: const TextStyle(
                                               fontSize: 13,

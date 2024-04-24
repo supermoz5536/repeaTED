@@ -34,7 +34,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadRecommend() async {
     try {
-      final String response = await rootBundle.loadString('assets/1_recommend.json');
+      final String response = await rootBundle.loadString('jsons/1_recommend.json');
       // リストの各要素に対して型キャストを行う場合は、
       // asキーワードをmap()メソッド内で各アイテムに適用する必要があります。
       // なのでjsonDecodeの出力時にはキャストできません
@@ -49,7 +49,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadTedStageTalk() async {
     try {
-      final String response = await rootBundle.loadString('assets/2_ted_stage_talk.json');
+      final String response = await rootBundle.loadString('jsons/2_ted_stage_talk.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
@@ -62,7 +62,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadTedEd() async {
     try {
-      final String response = await rootBundle.loadString('assets/3_ted_ed.json');
+      final String response = await rootBundle.loadString('jsons/3_ted_ed.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
@@ -75,7 +75,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadTedTalk() async {
     try {
-      final String response = await rootBundle.loadString('assets/4_ted_talk.json');
+      final String response = await rootBundle.loadString('jsons/4_ted_talk.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
@@ -88,7 +88,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadTedInstituteTalk() async {
     try {
-      final String response = await rootBundle.loadString('assets/5_ted_institute_talk.json');
+      final String response = await rootBundle.loadString('jsons/5_ted_institute_talk.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
@@ -101,7 +101,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadTedSalonTalk() async {
     try {
-      final String response = await rootBundle.loadString('assets/6_ted_salon_talk.json');
+      final String response = await rootBundle.loadString('jsons/6_ted_salon_talk.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
@@ -114,7 +114,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadOriginalContent() async {
     try {
-      final String response = await rootBundle.loadString('assets/7_original_content.json');
+      final String response = await rootBundle.loadString('jsons/7_original_content.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
@@ -127,7 +127,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadTabiEats() async {
     try {
-      final String response = await rootBundle.loadString('assets/8_tabi_eats.json');
+      final String response = await rootBundle.loadString('jsons/8_tabi_eats.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
