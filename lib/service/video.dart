@@ -137,5 +137,30 @@ class Video {
   }
 
 
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadRachelAndJun() async {
+    try {
+      final String response = await rootBundle.loadString('jsons/9_rachel_and_jun.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadPaoloromTokyo() async {
+    try {
+      final String response = await rootBundle.loadString('jsons/10_paolo_from_tokyo.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
 }
 
