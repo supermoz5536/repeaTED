@@ -39,7 +39,7 @@ class _AbroadInJapanPageState extends ConsumerState<AbroadInJapanPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadPaoloromTokyo().then((result) {
+      futureList = Video.loadAbroadInJapan().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -570,7 +570,7 @@ class _AbroadInJapanPageState extends ConsumerState<AbroadInJapanPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 7,
+                                flagNumber: 11,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -602,7 +602,7 @@ class _AbroadInJapanPageState extends ConsumerState<AbroadInJapanPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 7,
+                                flagNumber: 11,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -921,7 +921,7 @@ class _AbroadInJapanPageState extends ConsumerState<AbroadInJapanPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 7,
+                                    flagNumber: 11,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ

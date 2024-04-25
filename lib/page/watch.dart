@@ -10,6 +10,8 @@ import 'package:repea_ted/model/caption_tracks.dart';
 import 'package:repea_ted/model/pair_captions.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
+import 'package:repea_ted/page/10_paolo_from_tokyo.dart';
+import 'package:repea_ted/page/11_abroad_in_japan.dart';
 import 'package:repea_ted/page/7_original_content.dart';
 import 'package:repea_ted/page/3_ted_ed.dart';
 import 'package:repea_ted/page/5_ted_institute_talk.dart';
@@ -17,6 +19,8 @@ import 'package:repea_ted/page/6_ted_salon_talk.dart';
 import 'package:repea_ted/page/2_ted_stage_talk.dart';
 import 'package:repea_ted/page/4_ted_talk.dart';
 import 'package:repea_ted/page/1_top.dart';
+import 'package:repea_ted/page/8_tabi_eats.dart';
+import 'package:repea_ted/page/9_rachel_and_jun.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -292,7 +296,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: Image.asset('assets/icon.png'),
+        leading: Image.asset('assets/pics/icon.png'),
         title: const Text('repeaTED（リピーテッド）BETA版',
           style: TextStyle(
             fontSize: 15,
@@ -770,6 +774,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                         onPressed: () {                        
                           if (context.mounted) {
                               Widget nextPage;
+                              print('flag == $flagNumber');
 
                               switch (flagNumber) {
                                 case 1:
@@ -813,9 +818,38 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                     currentPageIndex: currentPageIndex
                                   ));
                                   break;
+
                                 case 7:
                                   nextPage = OriginalContentPage(PageTransitionConstructor(
                                     flagNumber: 7,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 8:
+                                  nextPage = TabiEatsPage(PageTransitionConstructor(
+                                    flagNumber: 8,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 9:
+                                  nextPage = RachelAndJunPage(PageTransitionConstructor(
+                                    flagNumber: 9,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 10:
+                                  nextPage = PaoloFromTokyoPage(PageTransitionConstructor(
+                                    flagNumber: 10,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 11:
+                                  nextPage = AbroadInJapanPage(PageTransitionConstructor(
+                                    flagNumber: 11,
                                     currentPageIndex: currentPageIndex
                                   ));
                                   break;
