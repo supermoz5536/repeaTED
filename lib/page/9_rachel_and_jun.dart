@@ -570,7 +570,7 @@ class _RachelAndJunPageState extends ConsumerState<RachelAndJunPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 7,
+                                flagNumber: 9,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -602,7 +602,7 @@ class _RachelAndJunPageState extends ConsumerState<RachelAndJunPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 7,
+                                flagNumber: 9,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -921,7 +921,7 @@ class _RachelAndJunPageState extends ConsumerState<RachelAndJunPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 7,
+                                    flagNumber: 9,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ
