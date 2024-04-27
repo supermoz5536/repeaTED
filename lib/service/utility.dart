@@ -86,12 +86,18 @@ static String? extractVideoId(String? url) {
 
 static String? extractJapaneseText(String? captionText) {
   // 英語の単語で始まる行を特定する正規表現
+  // (?!.*[ぁ-んァ-ヶ]). の部分で、
+  // まず行内に日本語がある場合は除く処理を行う
+  // その後で、
+  // 英語で始まるか、
+  // 数字で始まり、0回以上の空白行を挟んで、英語が続くか
+  // の行を取得する。
   RegExp regExp = RegExp(
-    r'^.*?([A-Za-z]+|\d+[ \t]*[A-Za-z]+).*',
+    r'^(?!.*[ぁ-んァ-ヶ]).*?([A-Za-z]+|\d+[ \t]*[A-Za-z]+).*',
     multiLine: true
   );
 
-  // 英語で始まる行を空文字で置換
+  // 取得した行を空文字に変換してトリムする。
   return captionText!.replaceAll(regExp, '').trim();
 }
 

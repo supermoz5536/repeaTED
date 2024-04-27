@@ -8,15 +8,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class PinkfongPage extends ConsumerStatefulWidget {
+class OliBarrettTravelPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const PinkfongPage(this.transitionConstructor, {super.key});
+  const OliBarrettTravelPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<PinkfongPage> createState() => _PinkfongPageState();
+  ConsumerState<OliBarrettTravelPage> createState() => _OliBarrettTravelPageState();
 }
 
-class _PinkfongPageState extends ConsumerState<PinkfongPage> {
+class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -39,7 +39,7 @@ class _PinkfongPageState extends ConsumerState<PinkfongPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadPinkfong().then((result) {
+      futureList = Video.loadOliBarrettTravel().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -80,7 +80,7 @@ class _PinkfongPageState extends ConsumerState<PinkfongPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 12,
+          flagNumber: 17,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('repeaTED（リピーテッド）BETA版',
@@ -570,7 +570,7 @@ class _PinkfongPageState extends ConsumerState<PinkfongPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 12,
+                                flagNumber: 17,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -602,7 +602,7 @@ class _PinkfongPageState extends ConsumerState<PinkfongPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 12,
+                                flagNumber: 17,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -697,7 +697,7 @@ class _PinkfongPageState extends ConsumerState<PinkfongPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'Pinkfongの一覧',
+                        'Oli Barrett Travelの一覧',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -921,7 +921,7 @@ class _PinkfongPageState extends ConsumerState<PinkfongPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 12,
+                                    flagNumber: 17,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ
