@@ -175,5 +175,18 @@ class Video {
   }
 
 
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadpinkfong() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/12_pinkfong.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
 }
 

@@ -84,7 +84,16 @@ static String? extractVideoId(String? url) {
   }
 
 
+static String? extractJapaneseText(String? captionText) {
+  // 英語の単語で始まる行を特定する正規表現
+  RegExp regExp = RegExp(
+    r'^.*?([A-Za-z]+|\d+[ \t]*[A-Za-z]+).*',
+    multiLine: true
+  );
 
+  // 英語で始まる行を空文字で置換
+  return captionText!.replaceAll(regExp, '').trim();
+}
 
 
 

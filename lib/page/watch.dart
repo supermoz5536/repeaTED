@@ -12,6 +12,7 @@ import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
 import 'package:repea_ted/page/10_paolo_from_tokyo.dart';
 import 'package:repea_ted/page/11_abroad_in_japan.dart';
+import 'package:repea_ted/page/12_pinkfong.dart';
 import 'package:repea_ted/page/7_original_content.dart';
 import 'package:repea_ted/page/3_ted_ed.dart';
 import 'package:repea_ted/page/5_ted_institute_talk.dart';
@@ -21,6 +22,7 @@ import 'package:repea_ted/page/4_ted_talk.dart';
 import 'package:repea_ted/page/1_top.dart';
 import 'package:repea_ted/page/8_tabi_eats.dart';
 import 'package:repea_ted/page/9_rachel_and_jun.dart';
+import 'package:repea_ted/service/utility.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -195,9 +197,16 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           print('● 0 currentCaptionIndex == $currentCaptionIndex');
           print('● 1 動画が一時停止された状態');
 
+
+          // 英語の行のみ削除
+          print('1 読み上げの englishText == ${captionsJa[currentCaptionIndex]['text']}');
+          String? japaneseText = Utility.extractJapaneseText(captionsJa[currentCaptionIndex]['text']);
+          print('2 読み上げの englishText == ${japaneseText}');
+
           // TTSでキャプションの読み上げ
           await tts.speak(
-            captionsJa[currentCaptionIndex]['text'],
+            japaneseText!,
+            // captionsJa[currentCaptionIndex]['text'],
           );
         }
       }
@@ -850,6 +859,12 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                 case 11:
                                   nextPage = AbroadInJapanPage(PageTransitionConstructor(
                                     flagNumber: 11,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+                                case 12:
+                                  nextPage = PinkfongPage(PageTransitionConstructor(
+                                    flagNumber: 12,
                                     currentPageIndex: currentPageIndex
                                   ));
                                   break;
