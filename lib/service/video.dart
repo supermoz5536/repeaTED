@@ -175,5 +175,109 @@ class Video {
   }
 
 
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadPinkfong() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/12_pinkfong.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadCookingWithDog() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/13_cooking_with_dog.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadJunsKitchen() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/14_juns_kitchen.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadWaoRyuOnlyInJapan() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/15_wao_ryu_only_in_japan.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadLifeWhereImFrom() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/16_life where im from.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadOliBarrettTravel() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/17_oli barrett travel.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadSharmeleon() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/18_sharmeleon .json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadUnrealEngineJp() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/19_unreal_engine_jp.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
 }
 
