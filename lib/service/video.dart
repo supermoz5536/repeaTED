@@ -256,7 +256,7 @@ class Video {
   /// List<Video>?型のオブジェクトを生成する関数です。
   static Future<List<Video>?> loadSharmeleon() async {
     try {
-      final String response = await rootBundle.loadString('assets/jsons/18_sharmeleon .json');
+      final String response = await rootBundle.loadString('assets/jsons/18_sharmeleon.json');
       final List<dynamic> data = jsonDecode(response!) as List;
         return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
     } catch (error) {
@@ -278,6 +278,58 @@ class Video {
     }
   }
 
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadCurrentlyHannah() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/20_currently_hannah.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadHereIsGood() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/21_here\'s_good.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadSamuraiJunjiroChannel() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/22_samurai_junjiro_channel.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
+
+  /// List<Video>?型のオブジェクトを生成する関数です。
+  static Future<List<Video>?> loadTalesFromOurPocket() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/23_tales_from_our_pocket.json');
+      final List<dynamic> data = jsonDecode(response!) as List;
+        return data.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList();
+    } catch (error) {
+      print('loadTedEd の実行失敗  ==  $error');
+      return null;
+    }
+  }
+
 
 }
+
 

@@ -90,7 +90,7 @@ class _TopPageState extends ConsumerState<TopPage> {
           flagNumber: 1,
           currentPageIndex: currentPageIndex,
         ),
-        title: const Text('repeaTED（リピーテッド）BETA版',
+        title: const Text('TraceSpeaker 英→日 BETA版',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -704,7 +704,7 @@ class _TopPageState extends ConsumerState<TopPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        '本日おすすめの人気TED',
+                        '本日おすすめ動画',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

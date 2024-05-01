@@ -1,5 +1,5 @@
 name: repea_ted
-description: "This app reads aloud Japanese YouTube videos with English subtitles in English."
+description: "This app reads aloud English YouTube videos with Japanese subtitles in Japanese."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -102,8 +102,12 @@ flutter:
     - assets/jsons/15_wao_ryu_only_in_japan.json
     - assets/jsons/16_life where im from.json
     - assets/jsons/17_oli barrett travel.json
-    - assets/jsons/18_sharmeleon .json
+    - assets/jsons/18_sharmeleon.json
     - assets/jsons/19_unreal_engine_jp.json
+    - assets/jsons/20_currently_hannah.json
+    - assets/jsons/21_here's_good.json
+    - assets/jsons/22_samurai_junjiro_channel.json
+    - assets/jsons/23_tales_from_our_pocket.json
 
 
   # To add assets to your application, add an assets section, like this:
