@@ -20,6 +20,10 @@ import 'package:repea_ted/page/16_life_where_in_from.dart';
 import 'package:repea_ted/page/17_oli_barrett_travel.dart';
 import 'package:repea_ted/page/18_sharmeleon.dart';
 import 'package:repea_ted/page/19_unreal_engine_jp.dart';
+import 'package:repea_ted/page/20_currently_hannah.dart';
+import 'package:repea_ted/page/21_here_is_good.dart';
+import 'package:repea_ted/page/22_samurai_junjiro_channel.dart';
+import 'package:repea_ted/page/23_tales_from_our_pocket.dart';
 import 'package:repea_ted/page/7_original_content.dart';
 import 'package:repea_ted/page/3_ted_ed.dart';
 import 'package:repea_ted/page/5_ted_institute_talk.dart';
@@ -313,7 +317,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Image.asset('assets/pics/icon.png'),
-        title: const Text('repeaTED（リピーテッド）BETA版',
+        title: const Text('TraceSpeaker 英→日 BETA版',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -926,6 +930,35 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                   ));
                                   break;                                
 
+
+                                case 20:
+                                  nextPage = CurrentlyHannahPage(PageTransitionConstructor(
+                                    flagNumber: 20,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;    
+
+                                case 21:
+                                  nextPage = HereIsGoodPage(PageTransitionConstructor(
+                                    flagNumber: 21,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 22:
+                                  nextPage = SamuraiJunjiroChannelPage(PageTransitionConstructor(
+                                    flagNumber: 22,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 23:
+                                  nextPage = TalesFromOurPocketPage(PageTransitionConstructor(
+                                    flagNumber: 23,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
                                 default:
                                   nextPage = TopPage(PageTransitionConstructor(
                                     flagNumber: 1,
@@ -966,7 +999,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                             padding: EdgeInsets.all(15.0),
                             child: Center(
                               child: Text(
-                                '・自動で動画の再生が始まります、始まらない時は再生ボタンをクリック。\n\n・再生位置をクリックで調整はできません（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
+                                '・表示する字幕の「言語選択」「ON/OFF」は動画右下の歯車マークで設定できます。\n\n・自動で動画の再生が始まります、始まらない時は再生ボタンをクリック。\n\n・再生位置をクリックで調整はできません（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white

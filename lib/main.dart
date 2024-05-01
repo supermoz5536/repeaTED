@@ -34,7 +34,7 @@ class MyApp extends ConsumerWidget {
                                             );
 
     return MaterialApp(
-      title: 'repeaTED',
+      title: 'TraceSpeaker',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,

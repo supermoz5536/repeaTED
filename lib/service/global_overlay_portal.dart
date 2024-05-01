@@ -13,6 +13,10 @@ import 'package:repea_ted/page/16_life_where_in_from.dart';
 import 'package:repea_ted/page/17_oli_barrett_travel.dart';
 import 'package:repea_ted/page/18_sharmeleon.dart';
 import 'package:repea_ted/page/19_unreal_engine_jp.dart';
+import 'package:repea_ted/page/20_currently_hannah.dart';
+import 'package:repea_ted/page/21_here_is_good.dart';
+import 'package:repea_ted/page/22_samurai_junjiro_channel.dart';
+import 'package:repea_ted/page/23_tales_from_our_pocket.dart';
 import 'package:repea_ted/page/7_original_content.dart';
 import 'package:repea_ted/page/3_ted_ed.dart';
 import 'package:repea_ted/page/5_ted_institute_talk.dart';
@@ -70,14 +74,16 @@ class CustomOverlayPortal extends StatelessWidget {
 
         /// ポップアップの表示位置, 表示内容
         Positioned(
-          top: screenSize.height * 0.15, // 画面高さの15%の位置から開始
-          left: screenSize.width * 0.1, // 画面幅の5%の位置から開始
+          top: MediaQuery.of(context).size.width < 600
+          ? screenSize.height * 0.1 // 画面高さの15%の位置から開始
+          : screenSize.height * 0.05,
+          left: screenSize.width * 0.05, // 画面幅の5%の位置から開始
           height: MediaQuery.of(context).size.width < 600
             ? screenSize.height * 0.8 // 画面幅の90%の幅
-            : 600,
+            : 650,
           width: MediaQuery.of(context).size.width < 600
-            ? screenSize.width * 0.8 // 画面幅の90%の幅
-            : 900,
+            ? screenSize.width * 0.9 // 画面幅の90%の幅
+            : 1000,
 
           child: Container(
             decoration: BoxDecoration(
@@ -126,6 +132,7 @@ class CustomOverlayPortal extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             Flexible(
               flex: 1,
               child: Column(
@@ -158,7 +165,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: '本日のおすすめ人気TED',
+                                text: '本日のおすすめ',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -370,7 +377,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: 'Institute(ビジネス系)',
+                                text: 'TED Institute(ビジネス系)',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -423,7 +430,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: 'サロントーク(少人数開催)',
+                                text: 'TED サロントーク(少人数開催)',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -476,7 +483,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: 'オリジナルコンテンツ',
+                                text: 'TED オリジナルコンテンツ',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -609,6 +616,8 @@ class CustomOverlayPortal extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 50)
                                     
                 ]
               ),
@@ -752,7 +761,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: 'Pinkfong',
+                                text: '世界名作童話',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -1098,6 +1107,7 @@ class CustomOverlayPortal extends StatelessWidget {
                     ),
                   ),
 
+                  const SizedBox(height: 50)
                 ]
               ),
             ),
@@ -1134,7 +1144,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: 'Unreal Engine Jp',
+                                text: 'Unreal Engine JP',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -1161,7 +1171,220 @@ class CustomOverlayPortal extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  // ■ 20_currently_hannah
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Currently Hannah',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 20 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 20,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => CurrentlyHannahPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
              
+                  // ■ 21_here_is_good
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Here\'s Good',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 21 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 21,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => HereIsGoodPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ 22_samurai_junjiro_channel
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'SAMURAI JUNJIRO Channel',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 22 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 22,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => SamuraiJunjiroChannelPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ 23_tales_from_our_pocket
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Tales From Our Pocket',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 23 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 23,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => TalesFromOurPocketPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 50)
                 ]
               ),
             ),
@@ -1227,7 +1450,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 // TapGestureRecognizerクラスに onTap プロパティがあるので
                                 // その値として応答関数を代入してる
                                 TextSpan(
-                                  text: '本日のおすすめ人気TED',
+                                  text: '本日のおすすめ',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 17.5,
@@ -1439,7 +1662,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 // TapGestureRecognizerクラスに onTap プロパティがあるので
                                 // その値として応答関数を代入してる
                                 TextSpan(
-                                  text: 'Institute(ビジネス系)',
+                                  text: 'TED Institute(ビジネス系)',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 17.5,
@@ -1492,7 +1715,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 // TapGestureRecognizerクラスに onTap プロパティがあるので
                                 // その値として応答関数を代入してる
                                 TextSpan(
-                                  text: 'サロントーク(少人数開催)',
+                                  text: 'TED サロントーク(少人数開催)',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 17.5,
@@ -1545,7 +1768,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 // TapGestureRecognizerクラスに onTap プロパティがあるので
                                 // その値として応答関数を代入してる
                                 TextSpan(
-                                  text: 'オリジナルコンテンツ',
+                                  text: 'TED オリジナルコンテンツ',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 17.5,
@@ -1813,7 +2036,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 // TapGestureRecognizerクラスに onTap プロパティがあるので
                                 // その値として応答関数を代入してる
                                 TextSpan(
-                                  text: 'Pinkfong',
+                                  text: '世界名作童話',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 17.5,
@@ -2184,7 +2407,7 @@ class CustomOverlayPortal extends StatelessWidget {
                               // TapGestureRecognizerクラスに onTap プロパティがあるので
                               // その値として応答関数を代入してる
                               TextSpan(
-                                text: 'Unreal Engine Jp',
+                                text: 'Unreal Engine JP',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.5,
@@ -2212,6 +2435,217 @@ class CustomOverlayPortal extends StatelessWidget {
                     ),
                   ),
              
+                  // ■ 20_currently_hannah
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Currently Hannah',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 20 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 20,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => CurrentlyHannahPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+             
+                  // ■ 21_here_is_good
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Here\'s Good',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 21 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 21,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => HereIsGoodPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ 22_samurai_junjiro_channel
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'SAMURAI JUNJIRO Channel',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 22 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 22,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => SamuraiJunjiroChannelPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ■ 23_tales_from_our_pocket
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Row(
+                      children: [
+                        // アイコン
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            left: 30,
+                            right: 10
+                          ),
+                          child: Icon(Icons.chevron_right_rounded,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                        // リンク部分
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // カスケード記法（..）を使用
+                              // = が挟まっているのは
+                              // TapGestureRecognizerクラスに onTap プロパティがあるので
+                              // その値として応答関数を代入してる
+                              TextSpan(
+                                text: 'Tales From Our Pocket',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.5,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    if (flagNumber != 23 && context.mounted) {
+                                      PageTransitionConstructor? constructor =
+                                      PageTransitionConstructor(
+                                          flagNumber: 23,
+                                          currentPageIndex: 0
+                                        );
+                                      Navigator.pushReplacement(  
+                                        context,
+                                        MaterialPageRoute(builder: (context) => TalesFromOurPocketPage(constructor)),
+                                      );
+                                    }
+                                  }
+                              ),
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
 
 
                     const SizedBox(height: 50)

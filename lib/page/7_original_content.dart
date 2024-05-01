@@ -83,7 +83,7 @@ class _OriginalContentPageState extends ConsumerState<OriginalContentPage> {
           flagNumber: 7,
           currentPageIndex: currentPageIndex,
         ),
-        title: const Text('repeaTED（リピーテッド）BETA版',
+        title: const Text('TraceSpeaker 英→日 BETA版',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,

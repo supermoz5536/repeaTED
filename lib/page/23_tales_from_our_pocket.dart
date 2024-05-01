@@ -8,15 +8,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class LifeWhereImFromPage extends ConsumerStatefulWidget {
+class TalesFromOurPocketPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const LifeWhereImFromPage(this.transitionConstructor, {super.key});
+  const TalesFromOurPocketPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<LifeWhereImFromPage> createState() => _LifeWhereImFromPageState();
+  ConsumerState<TalesFromOurPocketPage> createState() => _TalesFromOurPocketPagePageState();
 }
 
-class _LifeWhereImFromPageState extends ConsumerState<LifeWhereImFromPage> {
+class _TalesFromOurPocketPagePageState extends ConsumerState<TalesFromOurPocketPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -39,7 +39,7 @@ class _LifeWhereImFromPageState extends ConsumerState<LifeWhereImFromPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadLifeWhereImFrom().then((result) {
+      futureList = Video.loadTalesFromOurPocket().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -80,7 +80,7 @@ class _LifeWhereImFromPageState extends ConsumerState<LifeWhereImFromPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 16,
+          flagNumber: 23,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('TraceSpeaker 英→日 BETA版',
@@ -570,7 +570,7 @@ class _LifeWhereImFromPageState extends ConsumerState<LifeWhereImFromPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 16,
+                                flagNumber: 23,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -602,7 +602,7 @@ class _LifeWhereImFromPageState extends ConsumerState<LifeWhereImFromPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 16,
+                                flagNumber: 23,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -697,7 +697,7 @@ class _LifeWhereImFromPageState extends ConsumerState<LifeWhereImFromPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'Life Where im From一覧',
+                        'Tales From Our Pocketの一覧',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -921,7 +921,7 @@ class _LifeWhereImFromPageState extends ConsumerState<LifeWhereImFromPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 16,
+                                    flagNumber: 23,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ
