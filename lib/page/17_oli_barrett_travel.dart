@@ -673,8 +673,10 @@ class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
               ),
           
 
-              // ■ ギャラリーヘッダー
-              Padding(
+          // ■ ギャラリーヘッダー
+          MediaQuery.of(context).size.width < 600
+            ? const SizedBox.shrink()
+            : Padding(
                 padding: const EdgeInsets.only(
                   top:30,
                   left: 30,

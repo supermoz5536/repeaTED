@@ -673,8 +673,10 @@ class _WaoRyuOnlyInJapanPageState extends ConsumerState<WaoRyuOnlyInJapanPage> {
               ),
           
 
-              // ■ ギャラリーヘッダー
-              Padding(
+          // ■ ギャラリーヘッダー
+          MediaQuery.of(context).size.width < 600
+            ? const SizedBox.shrink()
+            : Padding(
                 padding: const EdgeInsets.only(
                   top:30,
                   left: 30,
@@ -697,7 +699,7 @@ class _WaoRyuOnlyInJapanPageState extends ConsumerState<WaoRyuOnlyInJapanPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'WAO RYU!ONLY in JAPAN の一覧',
+                        'WAO RYU!ONLY in JAPAN',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
