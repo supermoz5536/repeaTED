@@ -7,6 +7,7 @@ import 'package:repea_ted/analytics/custom_analytics.dart';
 import 'package:repea_ted/firebase_options.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/page/1_top.dart';
+import 'package:repea_ted/page/tutorial.dart';
 
 
 void main() async {
@@ -39,7 +40,8 @@ class MyApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: TopPage(constructor),
+      home: TutorialPage(),
+      // home: TopPage(constructor),
     );
   }
 }

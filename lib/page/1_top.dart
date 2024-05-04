@@ -8,6 +8,7 @@ import 'package:repea_ted/riverpod/provider/recommend_list_provider.dart';
 import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
+import 'package:flutter_overboard/flutter_overboard.dart';
 
 class TopPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
@@ -811,7 +812,7 @@ class _TopPageState extends ConsumerState<TopPage> {
 
               const SizedBox(height: 100)
 
-            ])
+            ]),
           ]
         )
       );
@@ -866,6 +867,5 @@ class _TopPageState extends ConsumerState<TopPage> {
       // backgroundColor:Color.fromARGB(255, 94, 94, 94),
     );
   }
-
 
   }
