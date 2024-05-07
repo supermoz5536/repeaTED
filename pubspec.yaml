@@ -86,6 +86,17 @@ flutter:
     # アセットをアプリケーションに追加する
   assets:
     - assets/pics/icon.png
+    - assets/pics/cup.png
+    - assets/pics/listening.png
+    - assets/pics/interesting.png
+    - assets/pics/search.png
+    - assets/pics/find.png
+    - assets/pics/repeat.png
+    - assets/pics/time.png
+    - assets/pics/enjoy.png
+    - assets/pics/2step.png
+    - assets/pics/continue.png
+    - assets/pics/cheese.png
     - assets/jsons/1_recommend.json
     - assets/jsons/2_ted_stage_talk.json
     - assets/jsons/3_ted_ed.json
