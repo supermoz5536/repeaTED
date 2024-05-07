@@ -36,6 +36,7 @@ import 'package:repea_ted/page/9_rachel_and_jun.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 // import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -807,10 +808,13 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                               print('isTapped affter == $isTapped');
                             },
                             // absorbing: false で設定でchildに伝版させる
-                            child: Container(
-                              height: 300, // 通常モード時の高さ
-                              width: 800,
-                              color: Colors.blue.withOpacity(0.5),
+                            child: PointerInterceptor(
+                              intercepting: true,
+                              child: Container(
+                                height: 300, // 通常モード時の高さ
+                                width: 800,
+                                color: Colors.blue.withOpacity(0.5),
+                              ),
                             ),
                           ),
 
