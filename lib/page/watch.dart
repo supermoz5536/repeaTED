@@ -65,6 +65,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   bool? isPaused = false;
   bool? isLoading = true;
   bool? isFullscreen = false;
+  bool? isTapped = false;
   int? flagNumber;
   int? currentPageIndex;
   int? currentCaptionIndex = 0;
@@ -783,15 +784,41 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                       //     ),
                       //   ),
                       // ),
+
+                      Stack(
+                        children: [
                   
-                      SizedBox(
-                        height: 300, // 通常モード時の高さ
-                        width: 800,
-                          child: YoutubePlayer(
-                          controller: iFrameController,
+                          // YouTubePlayer
+                          AbsorbPointer(
+                            absorbing: true,
+                            child: SizedBox(
+                              height: 300, // 通常モード時の高さ
+                              width: 800,
+                                child: YoutubePlayer(
+                                controller: iFrameController,
+                                ),
+                            ),
                           ),
+
+                          GestureDetector(
+                            onTap: () {
+                              print('isTapped before == $isTapped');
+                              isTapped = true;
+                              print('isTapped affter == $isTapped');
+                            },
+                            // absorbing: false で設定でchildに伝版させる
+                            child: Container(
+                              height: 300, // 通常モード時の高さ
+                              width: 800,
+                              color: Colors.blue.withOpacity(0.5),
+                            ),
+                          ),
+
+                        ],
                       ),
-                  
+
+
+
                       const SizedBox(height: 15),
                   
                       ElevatedButton(
