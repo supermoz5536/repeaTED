@@ -126,7 +126,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         }).toList();  
 
         captionTrackLength = captions.ja.length;    
-        print('captionTrackLength == $captionTrackLength');
+        print('captionTrackLength == ${captionsJa[1]}');
       }
     }).then((value) {
       // キャプションデータのロード処理を確実に待機してかつ
@@ -214,6 +214,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           String? japaneseText = Utility.extractJapaneseText(captionsJa[currentCaptionIndex]['text']);
           print('2 読み上げの englishText == ${japaneseText}');
 
+          await Future.delayed(const Duration(milliseconds: 750));
+
           // TTSでキャプションの読み上げ
           await tts.speak(
             japaneseText!,
@@ -222,8 +224,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         }
       }
     
-      // // ■ 動画が停止された場合の処理
-      // if (currentCaptionIndex == captionTrackLength! - 1) {  
+      // ■ 動画が停止された場合の処理
+      // if (event.playerState) {  
       //   print('動画が終了した状態');
       //   isUnStarted = false;
       //   isPlaying = false;
@@ -249,6 +251,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   Future<void> initTTS() async {
     // 音量を70%に設定
     await tts.setVolume(0.5); 
+    await tts.setSpeechRate(0.775);
+
 
     // 読み上げ完了時のコールバック設定
     tts.setCompletionHandler(() async{

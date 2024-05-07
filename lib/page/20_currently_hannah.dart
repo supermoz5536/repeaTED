@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
+import 'package:repea_ted/page/tutorial.dart';
 import 'package:repea_ted/page/watch.dart';
 import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
@@ -259,22 +260,25 @@ class _CurrentlyHannahPageState extends ConsumerState<CurrentlyHannahPage> {
           // ),
 
 
-          // // ■ マッチングヒストリーの表示ボタン
-          // // Builderウィジェットで祖先のScaffoldを包括したcontextを取得
-          // Builder(builder: (context) {
-          //   return IconButton(
-          //     onPressed: () {
-          //       Scaffold.of(context).openEndDrawer();
-          //     },
-          //     icon: const Icon(Icons.contacts_outlined,
-          //         color: Color.fromARGB(255, 176, 176, 176)),
-          //     iconSize: 27,
-          //     tooltip: 'Text',
-          //     // .of(context)は記述したそのウィジェット以外のスコープでscaffoldを探す
-          //     // AppBar は Scaffold の内部にあるので、AppBar の context では scaffold が見つけられない
-          //     // Builderウィジェット は Scaffold から独立してるので、その context においては scaffold が見つけられる,
-          //   );
-          // })
+          // ■ マッチングヒストリーの表示ボタン
+          // Builderウィジェットで祖先のScaffoldを包括したcontextを取得
+          Builder(builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(  
+                  context,
+                  MaterialPageRoute(builder: (context) => TutorialPage()),
+                );
+              },
+              icon: const Icon(Icons.help_outline_outlined,
+                  color: Color.fromARGB(255, 176, 176, 176)),
+              iconSize: 27,
+              tooltip: 'チュートリアルをもう一度見る',
+              // .of(context)は記述したそのウィジェット以外のスコープでscaffoldを探す
+              // AppBar は Scaffold の内部にあるので、AppBar の context では scaffold が見つけられない
+              // Builderウィジェット は Scaffold から独立してるので、その context においては scaffold が見つけられる,
+            );
+          })
         ],
       ),
 
