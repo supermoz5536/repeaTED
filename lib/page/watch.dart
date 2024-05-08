@@ -215,11 +215,11 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           // 型のキャスト String → double
           durationTime = double.parse(captionsJa[currentCaptionIndex]['dur']);
           // print('▲ 4 durationTimeの代入後の値: ${(captionsJa[currentCaptionIndex]['dur'])}');
-
+          print('playbackRate == ${iFrameController.value.playbackRate}');
           // ② そのカウント後に停止メソッドが実行されるようにスケジュール
           await Future.delayed(
             // 第1引数
-            Duration(milliseconds: (durationTime * 1000).toInt()),
+            Duration(milliseconds: (durationTime * 1000 * (1 / iFrameController.value.playbackRate)).toInt()),
             // 第2引数
             () {iFrameController.pauseVideo();}
           );
@@ -741,7 +741,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                             padding: EdgeInsets.all(15.0),
                             child: Center(
                               child: Text(
-                                '・「再生」「停止」[再生位置の調整]に関しては、緑色枠内の専用プレイヤーで操作してください。\n\n・表示字幕の「言語選択」は通常通りYouTube動画右下の歯車マークから設定できます。\n\n・動画が終了すると自動でループします。',
+                                '・「再生」「停止」「再生位置の調整」は、緑色枠内の専用プレイヤーで操作してください。\n\n・表示字幕の設定は、YouTubeのいつも通りの操作と同じです（動画右下の歯車マーク）\n\n・倍速再生にも対応しています。\n\n・動画が終了すると自動でループします。',
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white
