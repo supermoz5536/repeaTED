@@ -1,8 +1,12 @@
 // import 'dart:ffi';
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:repea_ted/cloud_functions/functions.dart';
@@ -66,15 +70,17 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   bool? isPaused = false;
   bool? isLoading = true;
   bool? isFullscreen = false;
-  bool? isTapped = false;
+  bool? isManuallyPaused = false;
   int? flagNumber;
   int? currentPageIndex;
   int? currentCaptionIndex = 0;
   int? captionTrackLength;
+  int pointerID = 0;
   dynamic captionsEn;
   dynamic captionsJa;
   double seekTime = 0.0;
   double durationTime = 100.0;
+  Offset? firstTapPosition;
   StreamSubscription? iFrameSubscription;
 
 
@@ -149,9 +155,12 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         print(' ★ 1 リスナーイベントの取得確認 == ${iFrameController.value.playerState}');
     
       // // ■ 動画が読み込まれ、まだ再生されていない場合の処理
-      if (iFrameController.value.playerState == PlayerState.unStarted) {
+      if (iFrameController.value.playerState == PlayerState.unStarted
+       && isManuallyPaused == false) {
+
         if (isUnStarted == false) {
           isUnStarted = true;
+          isManuallyPaused = false;
           print('■ 1 PlayerState.unStarteのタスク開始');
           // print('■ 3 動画の読み込み完了しましたが、まだ再生が開始されていません。');
           // print('■ 4 JA Caption 取得確認: ${captionsJa[currentCaptionIndex]['start']}');
@@ -174,12 +183,13 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         }
     }
 
-      // ■ 動画が再生中の場合の処理
+      // ■ システムによる再生処理のコールバック
       if (iFrameController.value.playerState == PlayerState.playing) {
         if (isPlaying == false) {
           isPlaying = true;
           isUnStarted = false;
-          isPaused = false;  
+          isPaused = false;
+          isManuallyPaused = false;
           print('▲ 0 currentCaptionIndex == $currentCaptionIndex');     
           print('▲ 1 動画が再生中です。');
           // print('▲ 2 該当キャプションの オブジェクトの確認: ${(captionsJa[currentCaptionIndex])}');
@@ -188,7 +198,6 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           // 型のキャスト String → double
           durationTime = double.parse(captionsJa[currentCaptionIndex]['dur']);
           // print('▲ 4 durationTimeの代入後の値: ${(captionsJa[currentCaptionIndex]['dur'])}');
-          
 
           // ② そのカウント後に停止メソッドが実行されるようにスケジュール
           await Future.delayed(
@@ -202,11 +211,15 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         }
       }
     
-      // ■ 動画が一時停止された場合の処理
-      if (iFrameController.value.playerState == PlayerState.paused) {
+
+      // ■ システムによる一時停止処理のコールバック
+      if (iFrameController.value.playerState == PlayerState.paused
+       && isManuallyPaused == false) {
+
         if (isPaused == false) {
           isPaused = true;
           isPlaying = false;
+          isManuallyPaused = false;
           print('● 0 currentCaptionIndex == $currentCaptionIndex');
           print('● 1 動画が一時停止された状態');
 
@@ -225,29 +238,18 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           );
         }
       }
-    
-      // ■ 動画が停止された場合の処理
-      // if (event.playerState) {  
-      //   print('動画が終了した状態');
-      //   isUnStarted = false;
-      //   isPlaying = false;
-      //   isPaused = true;
-      //   currentCaptionIndex = 0;
-      //   seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
 
-      //   // 再生ポジションを現キャプションの開始時刻に移動し
-      //   await iFrameController.seekTo(
-      //     seconds: seekTime,
-      //     allowSeekAhead: true
-      //   );
+      // ■ ユーザーによる一時停止処理のコールバック
+      if (iFrameController.value.playerState == PlayerState.paused
+       && isManuallyPaused == true) {
+          isUnStarted = false;
+          isPlaying = false;
+          isPaused = false;
+          print('ユーザーよる一時停止処理のコールバック');
+      }
 
-      //   // その後に再生
-      //   await iFrameController.playVideo();
-      // }
     });
   }
-
-
 
 
   Future<void> initTTS() async {
@@ -298,10 +300,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
             await iFrameController.playVideo();
           }
     });
-  
   }
-
-    // disposeメソッドをオーバーライド
+  
   @override
   void dispose() {
     // showDialogNameController.removeListener(() {setState((){});});
@@ -339,431 +339,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
               color: Colors.white,
               height: 0,
             )),
-        actions: <Widget>[
-
-
-          // // ■ リクエスト通知ボタン
-          // OverlayPortal(
-          //   /// controller: 表示と非表示を制御するコンポーネント
-          //   /// overlayChildBuilder: OverlayPortal内の表示ウィジェットを構築する応答関数です。
-          //   controller: _overlayController1st,
-          //   overlayChildBuilder: (BuildContext context) {
-            
-          //   /// 画面サイズ情報を取得
-          //   final Size screenSize = MediaQuery.of(context).size;
-            
-
-          //     return Stack(
-          //       children: [
-
-          //         /// 範囲外をタップしたときにOverlayを非表示する処理
-          //         /// Stack()最下層の全領域がスコープの範囲
-          //         GestureDetector(
-          //           onTap: () {
-          //             _overlayController1st.toggle();
-          //           },
-          //           child: Container(color: Colors.transparent),
-          //         ),
-
-          //         /// ポップアップの表示位置, 表示内容
-          //         Positioned(
-          //           top: screenSize.height * 0.15, // 画面高さの15%の位置から開始
-          //           left: screenSize.width * 0.05, // 画面幅の5%の位置から開始
-          //           height: screenSize.height * 0.3, // 画面高さの30%の高さ
-          //           width: screenSize.width * 0.9, // 画面幅の90%の幅
-          //           child: Card(
-          //             elevation: 20,
-          //             color: Colors.white,
-          //             child: Column(
-          //                 children: [
-          //                   Container(
-          //                         height: 30,
-          //                         width: double.infinity,
-          //                         color: const Color.fromARGB(255, 94, 94, 94),
-          //                         child: Center(
-          //                           child: Text(
-          //                             'Text',
-          //                             style: const TextStyle(
-          //                               color: Colors.white,
-          //                               fontSize: 20,
-          //                               fontWeight: FontWeight.bold
-          //                             )
-          //                           ),
-          //                         )
-          //                       ),
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(50),
-          //                     child: Center(child: 
-          //                       Text('Text',
-          //                       style: const TextStyle(
-          //                         color: Color.fromARGB(255, 91, 91, 91),
-          //                         fontSize: 15,
-          //                         fontWeight: FontWeight.bold
-          //                       ),
-          //                       )),
-          //                   ),
-          //                 ],
-          //               )
-
-          //             ),
-          //           ),
-          //         ],
-          //       );
-          //     },
-          //   child: IconButton(
-          //       onPressed: () {_overlayController1st.toggle();},
-          //       icon: const Icon(Icons.person_add_outlined,
-          //           color: Color.fromARGB(255, 176, 176, 176)),
-          //       iconSize: 35,
-          //       tooltip: 'Text',
-          //     )
-          // ),
-
-
-
-          // // ■ DMの通知ボタン
-          // OverlayPortal(
-          //   /// controller: 表示と非表示を制御するコンポーネント
-          //   /// overlayChildBuilder: OverlayPortal内の表示ウィジェットを構築する応答関数です。
-          //   controller: _overlayController2nd,
-          //   overlayChildBuilder: (BuildContext context) {
-            
-          //   /// 画面サイズ情報を取得
-          //   final Size screenSize = MediaQuery.of(context).size;
-            
-
-          //     return Stack(
-          //       children: [
-
-          //         /// 範囲外をタップしたときにOverlayを非表示する処理
-          //         /// Stack()最下層の全領域がスコープの範囲
-          //         GestureDetector(
-          //           onTap: () {
-          //             _overlayController2nd.toggle();
-          //           },
-          //           child: Container(color: Colors.transparent),
-          //         ),
-
-          //         /// ポップアップの表示位置, 表示内容
-          //         Positioned(
-          //           top: screenSize.height * 0.15, // 画面高さの15%の位置から開始
-          //           left: screenSize.width * 0.05, // 画面幅の5%の位置から開始
-          //           height: screenSize.height * 0.3, // 画面高さの30%の高さ
-          //           width: screenSize.width * 0.9, // 画面幅の90%の幅.
-          //           child: Card(
-          //             elevation: 20,
-          //             color: Colors.white,
-          //             child:  Column(
-          //                 children: [
-          //                   Container(
-          //                         height: 30,
-          //                         width: double.infinity,
-          //                         color: const Color.fromARGB(255, 94, 94, 94),
-          //                         child: Center(
-          //                           child: Text(
-          //                             'Text',
-          //                             style: const TextStyle(
-          //                               color: Colors.white,
-          //                               fontSize: 20,
-          //                               fontWeight: FontWeight.bold
-          //                             )
-          //                           ),
-          //                         )
-          //                       ),
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(50),
-          //                     child: Center(child: 
-          //                       Text('Text',
-          //                       style: const TextStyle(
-          //                         color: Color.fromARGB(255, 91, 91, 91),
-          //                         fontSize: 15,
-          //                         fontWeight: FontWeight.bold
-          //                       ),
-          //                       )),
-          //                   ),
-          //                 ],
-          //               )
-          //             ),
-          //           ),
-          //         ],
-          //       );
-          //     },
-          //   child: IconButton(
-          //       onPressed: () {_overlayController2nd.toggle();},
-          //       icon: const Icon(Icons.notifications_none_outlined,
-          //           color: Color.fromARGB(255, 176, 176, 176)),
-          //       iconSize: 35,
-          //       tooltip: 'Text',
-          //     )
-          // ),
-
-
-          // // ■ マッチングヒストリーの表示ボタン
-          // // Builderウィジェットで祖先のScaffoldを包括したcontextを取得
-          // Builder(builder: (context) {
-          //   return IconButton(
-          //     onPressed: () {
-          //       Scaffold.of(context).openEndDrawer();
-          //     },
-          //     icon: const Icon(Icons.contacts_outlined,
-          //         color: Color.fromARGB(255, 176, 176, 176)),
-          //     iconSize: 27,
-          //     tooltip: 'Text',
-          //     // .of(context)は記述したそのウィジェット以外のスコープでscaffoldを探す
-          //     // AppBar は Scaffold の内部にあるので、AppBar の context では scaffold が見つけられない
-          //     // Builderウィジェット は Scaffold から独立してるので、その context においては scaffold が見つけられる,
-          //   );
-          // })
-        ],
       ),
-
-      
-      // drawer: Drawer(
-      //   child: Column(
-      //     children: [
-      //       Expanded(
-      //         //ListView が無限の長さを持つので直接 column でラップすると不具合
-      //         //Expanded で長さを限界値に指定.
-      //         child: ListView(
-      //           children: [
-      //             SizedBox(
-      //               height: 380,
-      //               child: DrawerHeader(
-      //                   child: Column(
-      //                     children: [
-
-      //                     //   // ■ プロフィール画面選択
-      //                     //   Material(
-      //                     //   color: Colors.transparent,
-      //                     //   child: Ink(
-      //                     //     decoration: BoxDecoration(
-      //                     //         shape: BoxShape.circle,
-      //                     //         image: DecorationImage(
-      //                     //             image: NetworkImage(meUser!.userImageUrl!),
-      //                     //             fit: BoxFit.cover)),
-      //                     //     // BoxFith は画像の表示方法の制御
-      //                     //     // cover は満遍なく埋める
-      //                     //     child: InkWell(
-      //                     //       splashColor: Colors.black.withOpacity(0.1),
-      //                     //       radius: 100,
-      //                     //       customBorder: const CircleBorder(),
-      //                     //       onTap: () {},
-      //                     //       child: const SizedBox(width: 110, height: 110),
-      //                     //       // InkWellの有効範囲はchildのWidgetの範囲に相当するので
-      //                     //       // タップの有効領域確保のために、空のSizedBoxを設定
-      //                     //     ),
-      //                     //   ),
-      //                     // ),
-
-      //                       // ■ 名前の選択
-      //                       Row(
-      //                         children: [
-      //                           Expanded(
-      //                             child: ListTile(
-      //                               title: Text('Text'),
-      //                               subtitle: Text('TEXT',
-      //                                 style: const TextStyle(
-      //                                   color: Color.fromARGB(255, 153, 153, 153)
-      //                                 ),),
-      //                             )),
-      //                           ElevatedButton(
-      //                             style: ButtonStyle(
-      //                               // ボタンの最小サイズを設定
-      //                               minimumSize: MaterialStateProperty.all(const Size(0, 30))),
-      //                             onPressed:() {},
-      //                             child: Text('Text') 
-      //                           ), 
-      //                       ]),
-
-      //                       // ■ プロフィールコメントの選択
-      //                       Row(
-      //                         children: [
-      //                           Expanded(
-      //                             child: ListTile(
-      //                               title: Text('Text'),
-      //                               // subtitle: Text('${meUser!.statement}',
-      //                               //   style: const TextStyle(
-      //                               //     color: Color.fromARGB(255, 153, 153, 153)
-      //                               //   ),),
-      //                             )),
-      //                           ElevatedButton(
-      //                             style: ButtonStyle(
-      //                               // ボタンの最小サイズを設定
-      //                               minimumSize: MaterialStateProperty.all(const Size(0, 30))),
-      //                             onPressed:() {},
-      //                             child: Text('Text') 
-      //                           ), 
-      //                       ]),
-
-      //                       // ■ プロフィールコメント表示欄
-      //                       Row(
-      //                         children: [
-      //                           Padding(
-      //                             padding: const EdgeInsets.only(left: 15.0),
-      //                             child: Container(
-      //                               color: Colors.white,
-      //                               height: 100,
-      //                               width: 225,
-      //                               child: Padding(
-      //                                 padding: const EdgeInsets.all(8.0),
-      //                                 child: Text('',
-      //                                 style: const TextStyle(
-      //                                   color: Color.fromARGB(255, 153, 153, 153)
-      //                                 ),),
-      //                               ),
-      //                             ),
-      //                           ),
-      //                         ],
-      //                       )
-      //                 ],
-      //               )),
-      //             ),
-      //         ]),
-      //       ),
-
-      //       const Center(
-      //         child: SizedBox(
-      //           height: 50,
-      //           child: Center(
-      //             child: Text('Comming soon!')),
-      //         ),
-      //       ),
-            
-      //       // ■ Display Language
-      //       Container(
-      //         decoration: const BoxDecoration(
-      //           border: Border(
-      //             top: BorderSide(
-      //                 color: Color.fromARGB(255, 199, 199, 199), width: 1.0),
-      //           ),
-      //         ),
-      //         padding: const EdgeInsets.all(8),
-      //         child: Row(
-      //           children: [
-      //             Expanded(
-      //               child: ListTile(
-      //                 title: Text('Text'),
-      //               ),
-      //             ),
-      //             Padding(
-      //               padding: const EdgeInsets.only(right: 20),
-      //               child: Text('Text'),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-
-      //       // ■ Target Language
-      //       Container(
-      //         decoration: const BoxDecoration(
-      //           border: Border(
-      //             top: BorderSide(
-      //                 color: Color.fromARGB(255, 199, 199, 199), width: 1.0),
-      //           ),
-      //         ),
-      //         padding: const EdgeInsets.all(8),
-      //         child: Row(
-      //           children: [
-      //             Expanded(
-      //               child: ListTile(
-      //                 title: Text('Text'),
-      //               ),
-      //             ),
-      //             Padding(
-      //               padding: const EdgeInsets.only(right: 20),
-      //               child: Text('Text'),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-
-      //       // ■ サブスクリプション
-      //       Container(
-      //           decoration: const BoxDecoration(
-      //             border: Border(
-      //               top: BorderSide(
-      //                   color: Color.fromARGB(255, 199, 199, 199), width: 1.0),
-      //             ),
-      //           ),
-      //           padding: const EdgeInsets.all(8),
-      //           child: Row(
-      //             children: [
-
-      //             Expanded(
-      //               child: ListTile(
-      //                 title: Text('Text'),
-      //               ),
-      //             ),
-
-      //             // ■ プラン選択 
-      //             Padding(
-      //               padding: const EdgeInsets.only(right: 20),
-      //               child: ElevatedButton(
-      //                 style: ButtonStyle(
-      //                   // ボタンの最小サイズを設定
-      //                   minimumSize: MaterialStateProperty.all(const Size(0, 30))),
-      //                 onPressed: () {
-                        
-      //                 },
-      //                 child: Text('Text',
-      //                   style: const TextStyle(
-      //                     fontSize: 15
-      //                   ),
-      //                   ),
-      //               )
-      //             ),
-      //           ]
-      //         )
-      //       ),
-
-      //       // ■ 最下部の環境設定部分
-      //       Container(
-      //           decoration: const BoxDecoration(
-      //             border: Border(
-      //               top: BorderSide(
-      //                   color: Color.fromARGB(255, 199, 199, 199), width: 1.0),
-      //             ),
-      //           ),
-      //           child: Row(
-      //             mainAxisAlignment: MainAxisAlignment.end,
-      //             children: [
-      //               IconButton(
-      //                       icon: const Icon(Icons.settings),
-      //                       iconSize: 25,
-      //                       tooltip: 'comming soon',
-      //                       color: const Color.fromARGB(255, 130, 130, 130),
-      //                       padding: EdgeInsets.zero,
-      //                       onPressed: () {},
-      //                     ),
-      //           ])
-      //       ),               
-      //     ],
-      //   ),
-      // ),
-
-
-      // endDrawer: Drawer(
-      //     child: Column(children: <Widget>[
-      //   Container(
-      //       decoration: const BoxDecoration(
-      //           border: Border(
-      //               bottom: BorderSide(
-      //         color: Color.fromARGB(255, 199, 199, 199),
-      //         width: 1.0,
-      //       ))),
-      //       height: 50,
-      //       width: 280,
-      //       child: Center(
-      //           child: Text(
-      //         'Text',
-      //         style: const TextStyle(
-      //           fontSize: 24,
-      //           fontWeight: FontWeight.bold),
-      //       ))),
-      // ])),
-
-
-
 
       body: isLoading == true
         ? const Center(child: CircularProgressIndicator()) // ローディング中はインジケーターを表示
@@ -776,55 +352,76 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                   
                       const SizedBox(height: 30),
 
-                      // Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: SizedBox(
-                      //     child: YoutubePlayer(
-                      //     controller: iFrameController,
-                      //     aspectRatio: 16 / 9,
-                      //     ),
-                      //   ),
-                      // ),
-
-                      Stack(
-                        children: [
-                  
-                          // YouTubePlayer
-                          AbsorbPointer(
-                            absorbing: true,
-                            child: SizedBox(
-                              height: 300, // 通常モード時の高さ
-                              width: 800,
-                                child: YoutubePlayer(
-                                controller: iFrameController,
-                                ),
-                            ),
+                      SizedBox(
+                        height: 300, 
+                        width: 800,
+                          child: YoutubePlayer(
+                          controller: iFrameController,
                           ),
-
-                          GestureDetector(
-                            onTap: () {
-                              print('isTapped before == $isTapped');
-                              isTapped = true;
-                              print('isTapped affter == $isTapped');
-                            },
-                            // absorbing: false で設定でchildに伝版させる
-                            child: PointerInterceptor(
-                              intercepting: true,
-                              child: Container(
-                                height: 300, // 通常モード時の高さ
-                                width: 800,
-                                color: Colors.blue.withOpacity(0.5),
-                              ),
-                            ),
-                          ),
-
-                        ],
                       ),
 
+                      const SizedBox(height: 15),
 
+                      SizedBox(
+                        height: 70,
+                        width: 200,
+                        child: Card(
+                          elevation: 8,
+                          color: Colors.lightGreen,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                          
+                              // ■ 再生ボタン
+                              ElevatedButton(
+                                onPressed: () async{
+                                  isManuallyPaused = false;
+                                  await iFrameController.playVideo();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
+                                  ),
+                                backgroundColor: Colors.white, 
+                                foregroundColor: Colors.blue, 
+                                ),
+                                child: const Text('再生',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                )
+                              ),
+                          
+                              const SizedBox(width: 15,),
+                          
+                              // ■ 停止ボタン                            
+                              ElevatedButton(
+                                onPressed: () async{
+                                  isManuallyPaused = true;
+                                  await iFrameController.pauseVideo();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
+                                  ),
+                                backgroundColor: Colors.white, 
+                                foregroundColor: Colors.blue, 
+                                ),
+                                child: const Text('停止',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                          
+                            ],
+                          ),
+                        ),
+                      ),
 
                       const SizedBox(height: 15),
-                  
+
+                      // ■ 戻るボタン                  
                       ElevatedButton(
                         onPressed: () {                        
                           if (context.mounted) {
@@ -1009,7 +606,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
                           }
                         },
-                        child: const Text('戻る',
+                        child: const Text('動画一覧に戻る',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold
@@ -1017,6 +614,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                         )
                       ),
                   
+
+                      // ■ 注意書き
                       const SizedBox(
                         height: 275,
                         width: 800,
@@ -1034,7 +633,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                             padding: EdgeInsets.all(15.0),
                             child: Center(
                               child: Text(
-                                '・表示する字幕の「言語選択」「ON/OFF」は動画右下の歯車マークで設定できます。\n\n・自動で動画の再生が始まります、始まらない時は再生ボタンをクリック。\n\n・再生位置をクリックで調整はできません（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
+                                '・「再生ボタン」「停止ボタン」は、専用に用意したものを使ってください。\n\n・表示する字幕の「言語選択」「ON/OFF」は動画右下の歯車マークで設定できます。\n\n・再生位置をクリックで調整はできません（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white
