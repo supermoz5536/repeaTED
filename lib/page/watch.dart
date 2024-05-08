@@ -9,6 +9,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:repea_ted/cloud_functions/functions.dart';
 import 'package:repea_ted/model/caption_tracks.dart';
 import 'package:repea_ted/model/pair_captions.dart';
@@ -38,6 +39,7 @@ import 'package:repea_ted/page/1_top.dart';
 import 'package:repea_ted/page/8_tabi_eats.dart';
 import 'package:repea_ted/page/9_rachel_and_jun.dart';
 import 'package:repea_ted/service/utility.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -62,6 +64,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   final FlutterTts tts = FlutterTts();
   // var yt = YoutubeExplode();
   String? videoId;
+  String? zeroTime;
   // late ClosedCaptionManifest trackManifest;
   late PairCaption pairCaption;
   List<PairCaption>? pairCaptions = [];
@@ -80,8 +83,11 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   dynamic captionsJa;
   double seekTime = 0.0;
   double durationTime = 100.0;
+  double? currentSliderValue = 0.0;
+  double? totalDuration = 0.0;
   Offset? firstTapPosition;
   StreamSubscription? iFrameSubscription;
+  StreamSubscription? playTimeSubscription;
 
 
   @override
@@ -90,6 +96,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     videoId = widget.watchConstructor!.videoId;
     flagNumber = widget.watchConstructor!.flagNumber;
     currentPageIndex = widget.watchConstructor!.currentPageIndex;
+
 
     // ■ YoutubePlayerControllerの初期化.
     iFrameController = YoutubePlayerController.fromVideoId(
@@ -102,6 +109,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         captionLanguage: 'en',
       ),
     );
+
 
     // ■ TTSの初期化
     initTTS();
@@ -133,21 +141,23 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           return Map<String, dynamic>.from(caption);
         }).toList();  
 
-        captionTrackLength = captions.ja.length;    
-        print('captionTrackLength == ${captionsJa[1]}');
+        captionTrackLength = captions.ja.length;
+        print('内容 == ${captions.ja[1]}');
       }
     }).then((value) {
       // キャプションデータのロード処理を確実に待機してかつ
       // データの取得が成功していたらリスナーを配置
-      if (captionsJa != null) listenPlayer();
-      print('リスナーの配置完了');
-      setState(() {
-        isLoading = false;  
-      });
+      if (captionsJa != null) {
+        listenPlayer();
+        listenPlayTime();
+        setState(() {
+          isLoading = false;  
+        });
+        print('リスナーの配置完了');
+      }
     });
 
   }
-
 
   /// 各キャプションにおける自動処理の内容を記述
   void listenPlayer() {
@@ -161,6 +171,13 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         if (isUnStarted == false) {
           isUnStarted = true;
           isManuallyPaused = false;
+
+          // ■ 全体の動画の長さの取得
+          final loadedTotalDuration = await iFrameController.duration;
+          setState(() {
+            totalDuration = loadedTotalDuration;       
+          });
+  
           print('■ 1 PlayerState.unStarteのタスク開始');
           // print('■ 3 動画の読み込み完了しましたが、まだ再生が開始されていません。');
           // print('■ 4 JA Caption 取得確認: ${captionsJa[currentCaptionIndex]['start']}');
@@ -248,10 +265,24 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           print('ユーザーよる一時停止処理のコールバック');
       }
 
+
+
     });
   }
 
+  /// YouTubePlayerの再生位置を取得します
+  void listenPlayTime() {
+    playTimeSubscription = iFrameController.
+    stream.listen((event) async{
+      double? loadedPlayTime = await iFrameController.currentTime;
+       // 最新の再生位置を取得してUIに変更を反映
+       setState(() {
+         currentSliderValue = loadedPlayTime;  
+       });
+    });
+  }
 
+  /// TTSの環境設定とコールバック設定
   Future<void> initTTS() async {
     // 音量を70%に設定
     await tts.setVolume(0.5); 
@@ -299,9 +330,48 @@ class _LoungePageState extends ConsumerState<WatchPage> {
             // その後に再生
             await iFrameController.playVideo();
           }
+
     });
   }
+
+  /// double を「分:秒」形式の文字列に変換する関数
+  String formatDuration(double? totalDuration) {
+    final duration = Duration(seconds: totalDuration!.toInt());
+    // duration.inMinutes: オブジェクトの総 "分数" を整数で返します。
+    // duration.inSeconds: オブジェクトの総 "秒数" を整数で返します。
+    // 割り切れない秒数は切り捨てられます。
+    // remainder(): 割り算の余りを取得するメソッド 
+    final minutes = NumberFormat('00').format(duration.inMinutes.remainder(60));
+    final seconds = NumberFormat('00').format(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
+  }
   
+  /// 二分探索を用いてシークポイントの値に最も近い 'start' 値を持つcaptionのindexを返す関数
+  int searchClosestCaption(double targetValue, List<Map<String, dynamic>> captions) {
+    int lowestIndex = 0;
+    int highestIndex = captions.length - 1;
+
+
+    while (lowestIndex <= highestIndex) {
+      int midIndex =  (lowestIndex + highestIndex) ~/ 2;
+      double midStartValue = double.parse(captions[midIndex]['start']);
+
+        // ターゲット値がmidと一致する場合はmidを返す
+        if (targetValue == midStartValue) {
+          return midIndex;
+
+        // ターゲット値がmidとより小さい領域場合は、high側(mid含む)を削除する
+        } else if (targetValue < midStartValue) {
+          highestIndex = midIndex - 1;
+          
+        // ターゲット値がmidとより大きい領域場合は、low側(mid含む)を削除する
+        } else {
+          lowestIndex = midIndex + 1;
+        }
+    }
+    return lowestIndex;
+  }
+
   @override
   void dispose() {
     // showDialogNameController.removeListener(() {setState((){});});
@@ -363,57 +433,95 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                       const SizedBox(height: 15),
 
                       SizedBox(
-                        height: 70,
-                        width: 200,
+                        height: 140,
+                        width: 400,
                         child: Card(
                           elevation: 8,
                           color: Colors.lightGreen,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          child: Column(
                             children: [
-                          
-                              // ■ 再生ボタン
-                              ElevatedButton(
-                                onPressed: () async{
-                                  isManuallyPaused = false;
-                                  await iFrameController.playVideo();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
-                                  ),
-                                backgroundColor: Colors.white, 
-                                foregroundColor: Colors.blue, 
-                                ),
-                                child: const Text('再生',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                )
-                              ),
-                          
-                              const SizedBox(width: 15,),
-                          
-                              // ■ 停止ボタン                            
-                              ElevatedButton(
-                                onPressed: () async{
-                                  isManuallyPaused = true;
-                                  await iFrameController.pauseVideo();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
-                                  ),
-                                backgroundColor: Colors.white, 
-                                foregroundColor: Colors.blue, 
-                                ),
-                                child: const Text('停止',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold
-                                  ),
+
+                              Expanded(
+                                // 再生位置のシークバー
+                                child: Slider(
+                                  value: currentSliderValue!,
+                                  min: 0,
+                                  max: totalDuration!,
+                                  onChanged: (value) async {
+                                    // スライダーの値を直接変更する
+                                    setState(() {
+                                      currentSliderValue = value;
+                                    });
+                                  },
+                                  onChangeEnd: (value) async{
+                                    print('1 onChangeEnd実行');
+                                    // 手動のスライダーの移動が完了したら
+                                    // 変数をリフレッシュして 
+                                    // シークを実行
+                                    isUnStarted = false;
+                                    isPlaying = false;
+                                    isPaused = false;
+                                    print('2 onChangeEnd実行');
+                                    await iFrameController.seekTo(seconds: value.toDouble());
+                                    // print('3 onChangeEnd実行 currentCaptionIndex == $currentCaptionIndex');
+                                    currentCaptionIndex = searchClosestCaption(value.toDouble(), captionsJa);
+                                    // print('4 onChangeEnd実行 currentCaptionIndex == $currentCaptionIndex');
+                                  },
+                                  activeColor: Colors.blue,
+                                  inactiveColor: Colors.white,
                                 ),
                               ),
-                          
+                              
+                              Text('${formatDuration(currentSliderValue)} / ${formatDuration(totalDuration)}'), 
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                              
+                                  // ■ 再生ボタン
+                                  ElevatedButton(
+                                    onPressed: () async{
+                                      isManuallyPaused = false;
+                                      await iFrameController.playVideo();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
+                                      ),
+                                    backgroundColor: Colors.white, 
+                                    foregroundColor: Colors.blue, 
+                                    ),
+                                    child: const Text('再生',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    )
+                                  ),
+                              
+                                  const SizedBox(width: 15,),
+                              
+                                  // ■ 停止ボタン                            
+                                  ElevatedButton(
+                                    onPressed: () async{
+                                      isManuallyPaused = true;
+                                      await iFrameController.pauseVideo();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
+                                      ),
+                                    backgroundColor: Colors.white, 
+                                    foregroundColor: Colors.blue, 
+                                    ),
+                                    child: const Text('停止',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
                             ],
                           ),
                         ),
@@ -633,7 +741,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                             padding: EdgeInsets.all(15.0),
                             child: Center(
                               child: Text(
-                                '・「再生ボタン」「停止ボタン」は、専用に用意したものを使ってください。\n\n・表示する字幕の「言語選択」「ON/OFF」は動画右下の歯車マークで設定できます。\n\n・再生位置をクリックで調整はできません（元の再生位置に自動で戻ります）\n\n・動画が終了すると自動でループします。',
+                                '・「再生」「停止」[再生位置の調整]に関しては、緑色枠内の専用プレイヤーで操作してください。\n\n・表示字幕の「言語選択」は通常通りYouTube動画右下の歯車マークから設定できます。\n\n・動画が終了すると自動でループします。',
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white
@@ -653,5 +761,3 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     );
   }
 }
-
-

@@ -34,7 +34,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
   bool? hasHistory = SharedPrefes.getHasHistory();
-  print('hasHistory == $hasHistory');
+  
   PageTransitionConstructor? constructor =  PageTransitionConstructor(
                                               flagNumber: 0,
                                               currentPageIndex: 0
