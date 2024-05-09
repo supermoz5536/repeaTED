@@ -280,10 +280,11 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     playTimeSubscription = iFrameController.
     stream.listen((event) async{
       double? loadedPlayTime = await iFrameController.currentTime;
-       // 最新の再生位置を取得してUIに変更を反映
-       setState(() {
-         currentSliderValue = loadedPlayTime;  
-       });
+      if (loadedPlayTime <= totalDuration! - 1){
+        setState(() {
+          currentSliderValue = loadedPlayTime;  
+        });
+      }
     });
   }
 
