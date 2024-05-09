@@ -29,6 +29,11 @@ import 'package:repea_ted/page/20_currently_hannah.dart';
 import 'package:repea_ted/page/21_here_is_good.dart';
 import 'package:repea_ted/page/22_samurai_junjiro_channel.dart';
 import 'package:repea_ted/page/23_tales_from_our_pocket.dart';
+import 'package:repea_ted/page/24_glitch.dart';
+import 'package:repea_ted/page/25_good_kids.dart';
+import 'package:repea_ted/page/26_learn_english_conversation_in_english.dart';
+import 'package:repea_ted/page/27_quality_of_english_life.dart';
+import 'package:repea_ted/page/28_service_english.dart';
 import 'package:repea_ted/page/7_original_content.dart';
 import 'package:repea_ted/page/3_ted_ed.dart';
 import 'package:repea_ted/page/5_ted_institute_talk.dart';
@@ -446,7 +451,10 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                 child: Slider(
                                   value: currentSliderValue!,
                                   min: 0,
-                                  max: totalDuration!,
+                                  // 一部動画において、max値を0.1~0.9の幅で超える値を
+                                  // valueが取得してエラーになっていたので
+                                  // max値を手動で +1 してカバー
+                                  max: totalDuration! + 1,
                                   onChanged: (value) async {
                                     // スライダーの値を直接変更する
                                     setState(() {
@@ -695,6 +703,41 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                 case 23:
                                   nextPage = TalesFromOurPocketPage(PageTransitionConstructor(
                                     flagNumber: 23,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 24:
+                                  nextPage = GlitchPage(PageTransitionConstructor(
+                                    flagNumber: 24,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 25:
+                                  nextPage = GoodKidsPage(PageTransitionConstructor(
+                                    flagNumber: 25,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 26:
+                                  nextPage = LearnEnglishConversationInEnglishPage(PageTransitionConstructor(
+                                    flagNumber: 26,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 27:
+                                  nextPage = QualityOfEnglishLifePage(PageTransitionConstructor(
+                                    flagNumber: 27,
+                                    currentPageIndex: currentPageIndex
+                                  ));
+                                  break;
+
+                                case 28:
+                                  nextPage = ServiceEnglishPage(PageTransitionConstructor(
+                                    flagNumber: 28,
                                     currentPageIndex: currentPageIndex
                                   ));
                                   break;

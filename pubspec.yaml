@@ -121,6 +121,11 @@ flutter:
     - assets/jsons/21_here's_good.json
     - assets/jsons/22_samurai_junjiro_channel.json
     - assets/jsons/23_tales_from_our_pocket.json
+    - assets/jsons/24_glitch.json
+    - assets/jsons/25_good_kids.json
+    - assets/jsons/26_learn_english_conversation_in_english.json
+    - assets/jsons/27_quality_of_english_life.json
+    - assets/jsons/28_service_english.json
 
 
   # To add assets to your application, add an assets section, like this:
