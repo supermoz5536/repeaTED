@@ -170,9 +170,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         print(' ★ 1 リスナーイベントの取得確認 == ${iFrameController.value.playerState}');
     
       // // ■ 動画が読み込まれ、まだ再生されていない場合の処理
-      if (iFrameController.value.playerState == PlayerState.unStarted
-       && isManuallyPaused == false) {
-
+      if (iFrameController.value.playerState == PlayerState.unStarted) {
         if (isUnStarted == false) {
           isUnStarted = true;
           isManuallyPaused = false;
@@ -254,10 +252,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           await Future.delayed(const Duration(milliseconds: 750));
 
           // TTSでキャプションの読み上げ
-          await tts.speak(
-            japaneseText!,
-            // captionsJa[currentCaptionIndex]['text'],
-          );
+          await tts.speak(japaneseText!);
         }
       }
 
@@ -385,6 +380,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     // nameController.dispose();
     // statementController.dispose();
     if (iFrameSubscription != null) iFrameSubscription!.cancel();
+    if (playTimeSubscription != null) playTimeSubscription!.cancel();
     // iFrameController.close();  // iFrameの .disposeメソッドはwebだとバグが潜在してる可能性がある
     tts.stop();
     super.dispose();
