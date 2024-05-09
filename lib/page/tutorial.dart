@@ -46,7 +46,7 @@ class _TutorialPageState extends State<TutorialPage> {
         color: const Color(0xFF9B90BC),
         imageAssetPath: 'assets/pics/2step.png',
         title: '使い方の2ステップ',
-        body: '①まず英語を"全集中"で聞きます。\n②聞き取れなかった部分を直後に流れる日本語を頼りにして、脳内で答え合わせをします。このプロセスの積み重ねで耳が開発されます。',
+        body: '①英語を"全集中"で聞きます（リーディングの練習にならないように字幕の確認は最小限にしましょう）\n②直後の日本語で、聞き取れなかった部分を脳内で答え合わせします。',
         doAnimateImage: true),
     PageModel(
         color: const Color(0xFF5886d6),
