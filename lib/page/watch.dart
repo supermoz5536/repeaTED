@@ -466,7 +466,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
                       // ■ Custom Player
                       SizedBox(
-                        height: 225,
+                        height: 250,
                         width: 400,
                         child: Card(
                           elevation: 8,
@@ -535,7 +535,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                     )
                                   ),
                               
-                                  const SizedBox(width: 15,),
+                                  const SizedBox(width: 27.5),
                               
                                   // ■ 停止ボタン                            
                                   ElevatedButton(
@@ -557,38 +557,36 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                     ),
                                   ),
 
-                                  const SizedBox(width: 15,),
-
-                                  // ■ 1つ前のセリフに戻る
-                                  ElevatedButton(
-                                    onPressed: () async{
-                                      currentCaptionIndex = currentCaptionIndex! - 1;
-                                      seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
-                                      await iFrameController.seekTo(
-                                        seconds: seekTime,
-                                        allowSeekAhead: true
-                                      );
-                                      iFrameController.playVideo();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
-                                      ),
-                                    backgroundColor: Colors.white, 
-                                    foregroundColor: Colors.blue, 
-                                    ),
-                                    child: const Text('1つ前のセリフに戻る',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold
-                                      ),
-                                    ),
-                                  ),
-
-
-
+                                  // const SizedBox(width: 15,),
                                 ],
                               ),
-                              const SizedBox(height: 20),
+
+                              const SizedBox(height: 15),
+
+                              // ■ 1つ前のセリフに戻る
+                              ElevatedButton(
+                                onPressed: () async{
+                                  currentCaptionIndex = currentCaptionIndex! - 1;
+                                  seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+                                  await iFrameController.seekTo(
+                                    seconds: seekTime,
+                                    allowSeekAhead: true
+                                  );
+                                  iFrameController.playVideo();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
+                                  ),
+                                backgroundColor: Colors.white, 
+                                foregroundColor: Colors.blue, 
+                                ),
+                                child: const Text('1つ前のセリフへ戻る',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
 
                               // ■ 読み上げON/OFF
                               SwitchListTile(
@@ -643,7 +641,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 10),
 
                       // ■ 戻るボタン                  
                       ElevatedButton(
