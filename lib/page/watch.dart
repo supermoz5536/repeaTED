@@ -79,20 +79,25 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   bool? isLoading = true;
   bool? isFullscreen = false;
   bool? isManuallyPaused = false;
+  bool isTraceSpeaker = true;
   int? flagNumber;
   int? currentPageIndex;
   int? currentCaptionIndex = 0;
   int? captionTrackLength;
   int pointerID = 0;
+  Timer? timer;
   dynamic captionsEn;
   dynamic captionsJa;
   double seekTime = 0.0;
   double durationTime = 100.0;
   double? currentSliderValue = 0.0;
   double? totalDuration = 0.0;
+  double previousPlaybackRate = 1.0;
+  double newPlaybackRate = 1.0;
   Offset? firstTapPosition;
   StreamSubscription? iFrameSubscription;
   StreamSubscription? playTimeSubscription;
+  
 
 
   @override
@@ -107,6 +112,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     iFrameController = YoutubePlayerController.fromVideoId(
       videoId: videoId!,
       params: const YoutubePlayerParams(
+        loop: true,
         mute: false,
         showControls: true,
         showFullscreenButton: true,
@@ -150,24 +156,49 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         print('内容 == ${captions.ja[1]}');
       }
     }).then((value) {
-      // キャプションデータのロード処理を確実に待機してかつ
-      // データの取得が成功していたらリスナーを配置
+      // キャプションデータのロード処理を
+      // 確実に待機してからリスナーを配置
       if (captionsJa != null) {
-        listenPlayer();
-        listenPlayTime();
+        addPlayerListener();
+        setPollingForCurrentTime();
+      
         setState(() {
           isLoading = false;  
         });
+
         print('リスナーの配置完了');
       }
     });
+  }
 
+
+  /// YouTubePlayerの現在の再生位置を
+  /// 再生速度のレートに合わせてポーリング
+  void setPollingForCurrentTime() {
+    if (timer != null) timer!.cancel();
+    
+    // 再生速度に応じてポーリング間隔を調整
+    Duration pollingInterval = Duration(
+      milliseconds: (1000 * (1 / iFrameController.value.playbackRate)).toInt(),
+    );
+
+    timer = Timer.periodic(pollingInterval, (timer) async {
+      if (iFrameController.value.playerState == PlayerState.playing) {
+        double? loadedPlayTime = await iFrameController.currentTime;
+        if (loadedPlayTime <= totalDuration! - 1) {
+          setState(() {
+            currentSliderValue = loadedPlayTime;
+          });
+        }
+      }
+    });
   }
 
   /// 各キャプションにおける自動処理の内容を記述
-  void listenPlayer() {
-      iFrameSubscription = iFrameController.listen((event) async{
-        print(' ★ 1 リスナーイベントの取得確認 == ${iFrameController.value.playerState}');
+  void addPlayerListener() {
+    iFrameSubscription = iFrameController.listen((event) async{
+      print(' ★ 1 リスナーイベントの取得確認 == ${iFrameController.value.playerState}');
+           
     
       // // ■ 動画が読み込まれ、まだ再生されていない場合の処理
       if (iFrameController.value.playerState == PlayerState.unStarted) {
@@ -198,13 +229,19 @@ class _LoungePageState extends ConsumerState<WatchPage> {
             allowSeekAhead: true
           );
 
-          // その後に再生
+          // // その後に再生
           // await iFrameController.playVideo();
         }
     }
 
+      // 再生速度に変更があった場合は、ポーリングのインターバルを更新
+      newPlaybackRate = await iFrameController.playbackRate; 
+      if (newPlaybackRate != previousPlaybackRate) setPollingForCurrentTime(); 
+
       // ■ システムによる再生処理のコールバック
-      if (iFrameController.value.playerState == PlayerState.playing) {
+      if (iFrameController.value.playerState == PlayerState.playing
+       && isTraceSpeaker == true) {
+
         if (isPlaying == false) {
           isPlaying = true;
           isUnStarted = false;
@@ -234,7 +271,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
       // ■ システムによる一時停止処理のコールバック
       if (iFrameController.value.playerState == PlayerState.paused
-       && isManuallyPaused == false) {
+       && isManuallyPaused == false
+       && isTraceSpeaker == true) {
 
         if (isPaused == false) {
           isPaused = true;
@@ -258,28 +296,15 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
       // ■ ユーザーによる一時停止処理のコールバック
       if (iFrameController.value.playerState == PlayerState.paused
-       && isManuallyPaused == true) {
+       && isManuallyPaused == true
+       && isTraceSpeaker == true) {
+
           isUnStarted = false;
           isPlaying = false;
           isPaused = false;
           print('ユーザーよる一時停止処理のコールバック');
       }
 
-
-
-    });
-  }
-
-  /// YouTubePlayerの再生位置を取得します
-  void listenPlayTime() {
-    playTimeSubscription = iFrameController.
-    stream.listen((event) async{
-      double? loadedPlayTime = await iFrameController.currentTime;
-      if (loadedPlayTime <= totalDuration! - 1){
-        setState(() {
-          currentSliderValue = loadedPlayTime;  
-        });
-      }
     });
   }
 
@@ -296,7 +321,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
           currentCaptionIndex = currentCaptionIndex! + 1;
 
-          if (currentCaptionIndex! < captionTrackLength!){
+          if (currentCaptionIndex! < captionTrackLength!) {
             seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
             print('● 3 キャスト完了');
 
@@ -354,6 +379,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
 
     while (lowestIndex <= highestIndex) {
+      print('searchClosestCaption');
       int midIndex =  (lowestIndex + highestIndex) ~/ 2;
       double midStartValue = double.parse(captions[midIndex]['start']);
 
@@ -370,6 +396,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           lowestIndex = midIndex + 1;
         }
     }
+
+    print('lowestIndex == $lowestIndex');
     return lowestIndex;
   }
 
@@ -381,6 +409,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     // statementController.dispose();
     if (iFrameSubscription != null) iFrameSubscription!.cancel();
     if (playTimeSubscription != null) playTimeSubscription!.cancel();
+    if (timer != null) timer!.cancel();
     // iFrameController.close();  // iFrameの .disposeメソッドはwebだとバグが潜在してる可能性がある
     tts.stop();
     super.dispose();
@@ -424,6 +453,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                   
                       const SizedBox(height: 30),
 
+                      // ■ YouTube Player
                       SizedBox(
                         height: 300, 
                         width: 800,
@@ -434,8 +464,9 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
                       const SizedBox(height: 15),
 
+                      // ■ Custom Player
                       SizedBox(
-                        height: 140,
+                        height: 225,
                         width: 400,
                         child: Card(
                           elevation: 8,
@@ -443,41 +474,42 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                           child: Column(
                             children: [
 
-                              Expanded(
-                                // 再生位置のシークバー
-                                child: Slider(
-                                  value: currentSliderValue!,
-                                  min: 0,
-                                  // 一部動画において、max値を0.1~0.9の幅で超える値を
-                                  // valueが取得してエラーになっていたので
-                                  // max値を手動で +1 してカバー
-                                  max: totalDuration! + 1,
-                                  onChanged: (value) async {
-                                    // スライダーの値を直接変更する
-                                    setState(() {
-                                      currentSliderValue = value;
-                                    });
-                                  },
-                                  onChangeEnd: (value) async{
-                                    print('1 onChangeEnd実行');
-                                    // 手動のスライダーの移動が完了したら
-                                    // 変数をリフレッシュして 
-                                    // シークを実行
-                                    isUnStarted = false;
-                                    isPlaying = false;
-                                    isPaused = false;
-                                    print('2 onChangeEnd実行');
-                                    await iFrameController.seekTo(seconds: value.toDouble());
-                                    // print('3 onChangeEnd実行 currentCaptionIndex == $currentCaptionIndex');
-                                    currentCaptionIndex = searchClosestCaption(value.toDouble(), captionsJa);
-                                    // print('4 onChangeEnd実行 currentCaptionIndex == $currentCaptionIndex');
-                                  },
-                                  activeColor: Colors.blue,
-                                  inactiveColor: Colors.white,
-                                ),
+                              Slider(
+                                value: currentSliderValue!,
+                                min: 0,
+                                // 一部動画において、max値を0.1~0.9の幅で超える値を
+                                // valueが取得してエラーになっていたので
+                                // max値を手動で +1 してカバー
+                                max: totalDuration! + 1,
+                                onChanged: (value) async {
+                                  // スライダーの値を直接変更する
+                                  setState(() {
+                                    currentSliderValue = value;
+                                  });
+                                },
+                                onChangeEnd: (value) async{
+                                  print('1 onChangeEnd実行');
+                                  // 手動のスライダーの移動が完了したら
+                                  // 変数をリフレッシュして 
+                                  // シークを実行
+                                  isUnStarted = false;
+                                  isPlaying = false;
+                                  isPaused = false;
+                                  print('2 onChangeEnd実行');
+                                  await iFrameController.seekTo(seconds: value.toDouble());
+                                  // print('3 onChangeEnd実行 currentCaptionIndex == $currentCaptionIndex');
+                                  currentCaptionIndex = searchClosestCaption(value.toDouble(), captionsJa);
+                                  // print('4 onChangeEnd実行 currentCaptionIndex == $currentCaptionIndex');
+                                },
+                                activeColor: Colors.blue,
+                                inactiveColor: Colors.white,
                               ),
-                              
-                              Text('${formatDuration(currentSliderValue)} / ${formatDuration(totalDuration)}'), 
+
+                              // ■ カウント                            
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text('${formatDuration(currentSliderValue)} / ${formatDuration(totalDuration)}'),
+                              ), 
 
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -524,9 +556,88 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                       ),
                                     ),
                                   ),
+
+                                  const SizedBox(width: 15,),
+
+                                  // ■ 1つ前のセリフに戻る
+                                  ElevatedButton(
+                                    onPressed: () async{
+                                      currentCaptionIndex = currentCaptionIndex! - 1;
+                                      seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+                                      await iFrameController.seekTo(
+                                        seconds: seekTime,
+                                        allowSeekAhead: true
+                                      );
+                                      iFrameController.playVideo();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero, // 四角形にするため、角を丸めない
+                                      ),
+                                    backgroundColor: Colors.white, 
+                                    foregroundColor: Colors.blue, 
+                                    ),
+                                    child: const Text('1つ前のセリフに戻る',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ),
+
+
+
                                 ],
                               ),
                               const SizedBox(height: 20),
+
+                              // ■ 読み上げON/OFF
+                              SwitchListTile(
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: MediaQuery.of(context).size.width < 600
+                                    ? 90
+                                    : 110
+                                ),
+                                title: const Center(
+                                  child: Text('読み上げ機能',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                ),
+                                subtitle: const Center(child: Text('(ON/OFF)')),
+                                value: isTraceSpeaker,
+                                onChanged: (bool newValue) async{
+                                  setState(() {
+                                    isTraceSpeaker = newValue; 
+                                    isUnStarted = false;
+                                    isPlaying = false;
+                                    isPaused = false;
+                                    isManuallyPaused = true;
+                                  });
+
+                                  // コントローラー状態の変更を意図的に作り出し
+                                  // リスナーのループ意図的に入られる
+                                  if (iFrameController.value.playerState == PlayerState.playing) {
+                                    await iFrameController.pauseVideo();   
+                                    await iFrameController.playVideo();
+                                  } else {                                    
+                                    await iFrameController.playVideo();
+                                    await iFrameController.pauseVideo();
+                                  }
+
+                                  if (newValue == true) {
+                                    // currentSliderVlueの更新を待つ手動待機
+                                    await Future.delayed(const Duration(milliseconds: 1000));
+                                    currentCaptionIndex = searchClosestCaption(
+                                      currentSliderValue!,
+                                      captionsJa
+                                    );
+                                  }
+
+                                }
+                              ),
+
                             ],
                           ),
                         ),
