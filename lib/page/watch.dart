@@ -572,7 +572,6 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                     seconds: seekTime,
                                     allowSeekAhead: true
                                   );
-                                  iFrameController.playVideo();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: const RoundedRectangleBorder(
