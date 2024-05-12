@@ -80,6 +80,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   bool? isFullscreen = false;
   bool? isManuallyPaused = false;
   bool isTraceSpeaker = true;
+  bool isCanceled = false;
   int? flagNumber;
   int? currentPageIndex;
   int? currentCaptionIndex = 0;
@@ -205,6 +206,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         if (isUnStarted == false) {
           isUnStarted = true;
           isManuallyPaused = false;
+          isCanceled = false;
 
           // ■ 全体の動画の長さの取得
           final loadedTotalDuration = await iFrameController.duration;
@@ -247,6 +249,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           isUnStarted = false;
           isPaused = false;
           isManuallyPaused = false;
+          isCanceled = false;
           print('▲ 0 currentCaptionIndex == $currentCaptionIndex');     
           print('▲ 1 動画が再生中です。');
           // print('▲ 2 該当キャプションの オブジェクトの確認: ${(captionsJa[currentCaptionIndex])}');
@@ -278,6 +281,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           isPaused = true;
           isPlaying = false;
           isManuallyPaused = false;
+          isCanceled = false;
           print('● 0 currentCaptionIndex == $currentCaptionIndex');
           print('● 1 動画が一時停止された状態');
 
@@ -318,44 +322,45 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     // 読み上げ完了時のコールバック設定
     tts.setCompletionHandler(() async{
       print("読み上げ完了後のコールバックが完了しました。");
+        currentCaptionIndex = currentCaptionIndex! + 1;
+        
+        if (isCanceled) return;
 
-          currentCaptionIndex = currentCaptionIndex! + 1;
+        if (currentCaptionIndex! < captionTrackLength!) {
+          seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+          print('● 3 キャスト完了');
 
-          if (currentCaptionIndex! < captionTrackLength!) {
-            seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
-            print('● 3 キャスト完了');
+          // 再生ポジションを次のIndexのstartの時刻に変更
+          await iFrameController.seekTo(
+            seconds: seekTime - 0.2,
+            allowSeekAhead: true
+          );
+          print('● 4 再生ポジション移動');
 
-            // 再生ポジションを次のIndexのstartの時刻に変更
-            await iFrameController.seekTo(
-              seconds: seekTime - 0.2,
-              allowSeekAhead: true
-            );
-            print('● 4 再生ポジション移動');
+          // 再生をトリガー
+          await iFrameController.playVideo();
+          print('● 5 再生のトリガー完了');
+          print('● 6 currentCaptionIndex == $currentCaptionIndex');
+        }
 
-            // 再生をトリガー
-            await iFrameController.playVideo();
-            print('● 5 再生のトリガー完了');
-            print('● 6 currentCaptionIndex == $currentCaptionIndex');
-          }
+        else if (currentCaptionIndex == captionTrackLength) {
+          print('動画が終了した状態');
+          print('● 7 currentCaptionIndex == $currentCaptionIndex');
+          isUnStarted = false;
+          isPlaying = false;
+          isPaused = true;
+          currentCaptionIndex = 0;
+          seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
 
-          else if (currentCaptionIndex == captionTrackLength) {
-            print('動画が終了した状態');
-            print('● 7 currentCaptionIndex == $currentCaptionIndex');
-            isUnStarted = false;
-            isPlaying = false;
-            isPaused = true;
-            currentCaptionIndex = 0;
-            seekTime = double.parse(captionsJa[currentCaptionIndex]['start']);
+          // 再生ポジションを現キャプションの開始時刻に移動し
+          await iFrameController.seekTo(
+            seconds: seekTime,
+            allowSeekAhead: true
+          );
 
-            // 再生ポジションを現キャプションの開始時刻に移動し
-            await iFrameController.seekTo(
-              seconds: seekTime,
-              allowSeekAhead: true
-            );
-
-            // その後に再生
-            await iFrameController.playVideo();
-          }
+          // その後に再生
+          await iFrameController.playVideo();
+        }
 
     });
   }
@@ -541,6 +546,8 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                   ElevatedButton(
                                     onPressed: () async{
                                       isManuallyPaused = true;
+                                      isCanceled = true;
+                                      await tts.stop();
                                       await iFrameController.pauseVideo();
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -557,7 +564,6 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                     ),
                                   ),
 
-                                  // const SizedBox(width: 15,),
                                 ],
                               ),
 
