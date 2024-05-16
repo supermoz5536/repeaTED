@@ -663,7 +663,7 @@ class _TalesFromOurPocketPagePageState extends ConsumerState<TalesFromOurPocketP
                             ),
                           ),    
                           Text(
-                          '・日本語字幕のある英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、Youtube動画のURLを入力して利用できます。\n\n・作業中などに流しっぱにして聞いてください。\n\n・英語の音に意識を向けて繰り返し聞いてるとリスニング力が上がります。',
+                          '・英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、上からYoutube動画のURLを入力して利用できます。\n\n・日本語、もしくは英語の字幕のある動画なら、どちらも日本語に翻訳して読み上げます。\n\n・[auto-generated]の字幕しかない動画の読み上げ機能は、現在開発中です。',
                             style: TextStyle(
                               color: Colors.white,
                               // fontWeight: FontWeight.bold,
@@ -935,7 +935,7 @@ class _TalesFromOurPocketPagePageState extends ConsumerState<TalesFromOurPocketP
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(builder: (context)
-                                    => WatchPage(watchConstructor)),
+                                    => WatchURLPage(watchConstructor)),
                                   (_) => false);
                               },
                               child: SizedBox(
