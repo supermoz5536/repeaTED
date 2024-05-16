@@ -5,6 +5,7 @@ import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
 import 'package:repea_ted/page/tutorial.dart';
 import 'package:repea_ted/page/watch.dart';
+import 'package:repea_ted/page/watch_url.dart';
 import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
@@ -581,7 +582,7 @@ class _OriginalContentPageState extends ConsumerState<OriginalContentPage> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(builder: (context)
-                                => WatchPage(watchConstructor)),
+                                => WatchURLPage(watchConstructor)),
                               (_) => false);
                           }
                         }
@@ -613,7 +614,7 @@ class _OriginalContentPageState extends ConsumerState<OriginalContentPage> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(builder: (context)
-                                => WatchPage(watchConstructor)),
+                                => WatchURLPage(watchConstructor)),
                               (_) => false);
                           }
                         }
