@@ -113,19 +113,19 @@ flutter:
     - assets/jsons/13_cooking_with_dog.json
     - assets/jsons/14_juns_kitchen.json
     - assets/jsons/15_wao_ryu_only_in_japan.json
-    - assets/jsons/16_life where im from.json
-    - assets/jsons/17_oli barrett travel.json
-    - assets/jsons/18_sharmeleon.json
+    - assets/jsons/16_documentary.json
+    - assets/jsons/17_eiga_com.json
+    - assets/jsons/18_anime_illustration.json
     - assets/jsons/19_unreal_engine_jp.json
-    - assets/jsons/20_currently_hannah.json
-    - assets/jsons/21_here's_good.json
+    - assets/jsons/20_healing.json
+    - assets/jsons/21_trip_vlog.json
     - assets/jsons/22_samurai_junjiro_channel.json
     - assets/jsons/23_tales_from_our_pocket.json
     - assets/jsons/24_glitch.json
     - assets/jsons/25_good_kids.json
     - assets/jsons/26_learn_english_conversation_in_english.json
     - assets/jsons/27_quality_of_english_life.json
-    - assets/jsons/28_service_english.json
+    - assets/jsons/28_anime_cg.json
 
 
   # To add assets to your application, add an assets section, like this:

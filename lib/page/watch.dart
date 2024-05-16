@@ -21,19 +21,19 @@ import 'package:repea_ted/page/12_pinkfong.dart';
 import 'package:repea_ted/page/13_cooking_with_dog.dart';
 import 'package:repea_ted/page/14_juns_kitchen.dart';
 import 'package:repea_ted/page/15_wao_ryu_only_in_japan.dart';
-import 'package:repea_ted/page/16_life_where_in_from.dart';
-import 'package:repea_ted/page/17_oli_barrett_travel.dart';
-import 'package:repea_ted/page/18_sharmeleon.dart';
+import 'package:repea_ted/page/16_documentary.dart';
+import 'package:repea_ted/page/17_eiga_com.dart';
+import 'package:repea_ted/page/18_anime_illustration.dart';
 import 'package:repea_ted/page/19_unreal_engine_jp.dart';
-import 'package:repea_ted/page/20_currently_hannah.dart';
-import 'package:repea_ted/page/21_here_is_good.dart';
+import 'package:repea_ted/page/20_healing.dart';
+import 'package:repea_ted/page/21_trip_vlog.dart';
 import 'package:repea_ted/page/22_samurai_junjiro_channel.dart';
 import 'package:repea_ted/page/23_tales_from_our_pocket.dart';
 import 'package:repea_ted/page/24_glitch.dart';
 import 'package:repea_ted/page/25_good_kids.dart';
 import 'package:repea_ted/page/26_learn_english_conversation_in_english.dart';
 import 'package:repea_ted/page/27_quality_of_english_life.dart';
-import 'package:repea_ted/page/28_service_english.dart';
+import 'package:repea_ted/page/28_anime_cg.dart';
 import 'package:repea_ted/page/7_original_content.dart';
 import 'package:repea_ted/page/3_ted_ed.dart';
 import 'package:repea_ted/page/5_ted_institute_talk.dart';
@@ -95,6 +95,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   double? totalDuration = 0.0;
   double previousPlaybackRate = 1.0;
   double newPlaybackRate = 1.0;
+  double timeForBackToSeek = 0.0;
   Offset? firstTapPosition;
   StreamSubscription? iFrameSubscription;
   StreamSubscription? playTimeSubscription;
@@ -264,7 +265,18 @@ class _LoungePageState extends ConsumerState<WatchPage> {
             // 第1引数
             Duration(milliseconds: (durationTime * 1000 * (1 / iFrameController.value.playbackRate)).toInt()),
             // 第2引数
-            () {iFrameController.pauseVideo();}
+            () async{
+
+              timeForBackToSeek = await iFrameController.currentTime - 0.025;
+
+              // 読み上げが開始が、次の字幕表示位置になってしまうのを避けるため
+              // 少し前にシークさせてから停止させる
+              await iFrameController.seekTo(
+                seconds: timeForBackToSeek,
+                allowSeekAhead: true
+              );
+          
+              iFrameController.pauseVideo();}
           );
           print('▲ 2 一時停止の予約完了 ');
           print('▲ 3 currentCaptionIndex == $currentCaptionIndex');     
@@ -291,7 +303,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           String? japaneseText = Utility.extractJapaneseText(captionsJa[currentCaptionIndex]['text']);
           print('2 読み上げの englishText == ${japaneseText}');
 
-          await Future.delayed(const Duration(milliseconds: 750));
+          await Future.delayed(const Duration(milliseconds: 400));
 
           // TTSでキャプションの読み上げ
           await tts.speak(japaneseText!);
@@ -314,9 +326,23 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
   /// TTSの環境設定とコールバック設定
   Future<void> initTTS() async {
-    // 音量を70%に設定
-    await tts.setVolume(0.5); 
-    await tts.setSpeechRate(0.775);
+
+    // // iOS専用のオーディオを設定
+    // await tts.setSharedInstance(true); // 共有インスタンスを設定
+    // await tts.setIosAudioCategory(
+    //   IosTextToSpeechAudioCategory.playback,
+    //   [
+    //     IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+    //     IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+    //     IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+    //     IosTextToSpeechAudioCategoryOptions.defaultToSpeaker
+    //   ],
+    //   IosTextToSpeechAudioMode.defaultMode
+    // ); 
+
+      // 音量を70%に設定
+      await tts.setVolume(0.85); 
+      await tts.setSpeechRate(0.9);
 
 
     // 読み上げ完了時のコールバック設定
@@ -762,21 +788,21 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                   break;
 
                                 case 16:
-                                  nextPage = LifeWhereImFromPage(PageTransitionConstructor(
+                                  nextPage = DocumentaryPage(PageTransitionConstructor(
                                     flagNumber: 16,
                                     currentPageIndex: currentPageIndex
                                   ));
                                   break;
 
                                 case 17:
-                                  nextPage = OliBarrettTravelPage(PageTransitionConstructor(
+                                  nextPage = EigaComPage(PageTransitionConstructor(
                                     flagNumber: 17,
                                     currentPageIndex: currentPageIndex
                                   ));
                                   break;
 
                                 case 18:
-                                  nextPage = SharmeleonPage(PageTransitionConstructor(
+                                  nextPage = AnimeIllustrationPage(PageTransitionConstructor(
                                     flagNumber: 18,
                                     currentPageIndex: currentPageIndex
                                   ));
@@ -791,14 +817,14 @@ class _LoungePageState extends ConsumerState<WatchPage> {
 
 
                                 case 20:
-                                  nextPage = CurrentlyHannahPage(PageTransitionConstructor(
+                                  nextPage = HealingPage(PageTransitionConstructor(
                                     flagNumber: 20,
                                     currentPageIndex: currentPageIndex
                                   ));
                                   break;    
 
                                 case 21:
-                                  nextPage = HereIsGoodPage(PageTransitionConstructor(
+                                  nextPage = TripVlogPage(PageTransitionConstructor(
                                     flagNumber: 21,
                                     currentPageIndex: currentPageIndex
                                   ));
@@ -847,7 +873,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
                                   break;
 
                                 case 28:
-                                  nextPage = ServiceEnglishPage(PageTransitionConstructor(
+                                  nextPage = AnimeCGPage(PageTransitionConstructor(
                                     flagNumber: 28,
                                     currentPageIndex: currentPageIndex
                                   ));

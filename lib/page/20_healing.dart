@@ -10,15 +10,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class CurrentlyHannahPage extends ConsumerStatefulWidget {
+class HealingPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const CurrentlyHannahPage(this.transitionConstructor, {super.key});
+  const HealingPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<CurrentlyHannahPage> createState() => _CurrentlyHannahPageState();
+  ConsumerState<HealingPage> createState() => _HealingPageState();
 }
 
-class _CurrentlyHannahPageState extends ConsumerState<CurrentlyHannahPage> {
+class _HealingPageState extends ConsumerState<HealingPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -41,7 +41,7 @@ class _CurrentlyHannahPageState extends ConsumerState<CurrentlyHannahPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadCurrentlyHannah().then((result) {
+      futureList = Video.loadhealing().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -704,7 +704,7 @@ class _CurrentlyHannahPageState extends ConsumerState<CurrentlyHannahPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'Currently Hannahの一覧',
+                        'ヒーリング系',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

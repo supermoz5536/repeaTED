@@ -9,15 +9,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class ServiceEnglishPage extends ConsumerStatefulWidget {
+class TripVlogPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const ServiceEnglishPage(this.transitionConstructor, {super.key});
+  const TripVlogPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<ServiceEnglishPage> createState() => _ServiceEnglishPageState();
+  ConsumerState<TripVlogPage> createState() => _TripVlogPageState();
 }
 
-class _ServiceEnglishPageState extends ConsumerState<ServiceEnglishPage> {
+class _TripVlogPageState extends ConsumerState<TripVlogPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -40,7 +40,7 @@ class _ServiceEnglishPageState extends ConsumerState<ServiceEnglishPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadServiceEnglish().then((result) {
+      futureList = Video.loadTripVlog().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -81,7 +81,7 @@ class _ServiceEnglishPageState extends ConsumerState<ServiceEnglishPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 28,
+          flagNumber: 21,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('TraceSpeaker 英→日 BETA版',
@@ -574,7 +574,7 @@ class _ServiceEnglishPageState extends ConsumerState<ServiceEnglishPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 28,
+                                flagNumber: 21,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -606,7 +606,7 @@ class _ServiceEnglishPageState extends ConsumerState<ServiceEnglishPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 28,
+                                flagNumber: 21,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -703,7 +703,7 @@ class _ServiceEnglishPageState extends ConsumerState<ServiceEnglishPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        '接客英語、おもてなし英語の一覧',
+                        '旅 & Vlog系',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -927,7 +927,7 @@ class _ServiceEnglishPageState extends ConsumerState<ServiceEnglishPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 28,
+                                    flagNumber: 21,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ

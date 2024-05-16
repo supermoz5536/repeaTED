@@ -9,19 +9,19 @@ import 'package:repea_ted/page/12_pinkfong.dart';
 import 'package:repea_ted/page/13_cooking_with_dog.dart';
 import 'package:repea_ted/page/14_juns_kitchen.dart';
 import 'package:repea_ted/page/15_wao_ryu_only_in_japan.dart';
-import 'package:repea_ted/page/16_life_where_in_from.dart';
-import 'package:repea_ted/page/17_oli_barrett_travel.dart';
-import 'package:repea_ted/page/18_sharmeleon.dart';
+import 'package:repea_ted/page/16_documentary.dart';
+import 'package:repea_ted/page/17_eiga_com.dart';
+import 'package:repea_ted/page/18_anime_illustration.dart';
 import 'package:repea_ted/page/19_unreal_engine_jp.dart';
-import 'package:repea_ted/page/20_currently_hannah.dart';
-import 'package:repea_ted/page/21_here_is_good.dart';
+import 'package:repea_ted/page/20_healing.dart';
+import 'package:repea_ted/page/21_trip_vlog.dart';
 import 'package:repea_ted/page/22_samurai_junjiro_channel.dart';
 import 'package:repea_ted/page/23_tales_from_our_pocket.dart';
 import 'package:repea_ted/page/24_glitch.dart';
 import 'package:repea_ted/page/25_good_kids.dart';
 import 'package:repea_ted/page/26_learn_english_conversation_in_english.dart';
 import 'package:repea_ted/page/27_quality_of_english_life.dart';
-import 'package:repea_ted/page/28_service_english.dart';
+import 'package:repea_ted/page/28_anime_cg.dart';
 import 'package:repea_ted/page/7_original_content.dart';
 import 'package:repea_ted/page/3_ted_ed.dart';
 import 'package:repea_ted/page/5_ted_institute_talk.dart';
@@ -574,7 +574,7 @@ class CustomOverlayPortal extends StatelessWidget {
                         ),
                       ),
         
-                      // ■ 16_life where im from
+                      // ■ 16_documentary
                       Padding(
                         padding: const EdgeInsets.only(top: 30),
                         child: Row(
@@ -599,7 +599,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                   // TapGestureRecognizerクラスに onTap プロパティがあるので
                                   // その値として応答関数を代入してる
                                   TextSpan(
-                                    text: '1-準1級: Life Where im From',
+                                    text: '1-準1級: ドキュメンタリー系',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 17.5,
@@ -615,7 +615,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                             );
                                           Navigator.pushReplacement(  
                                             context,
-                                            MaterialPageRoute(builder: (context) => LifeWhereImFromPage(constructor)),
+                                            MaterialPageRoute(builder: (context) => DocumentaryPage(constructor)),
                                           );
                                         }
                                       }
@@ -639,112 +639,6 @@ class CustomOverlayPortal extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-        
-                      // ■ 17_oli barrett travel
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Row(
-                          children: [
-                            // アイコン
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 10
-                              ),
-                              child: Icon(Icons.chevron_right_rounded,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                            ),
-                            // リンク部分
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  // カスケード記法（..）を使用
-                                  // = が挟まっているのは
-                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
-                                  // その値として応答関数を代入してる
-                                  TextSpan(
-                                    text: '1-準1級: Oli Barrett Travel',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 17.5,
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        if (flagNumber != 17 && context.mounted) {
-                                          PageTransitionConstructor? constructor =
-                                          PageTransitionConstructor(
-                                              flagNumber: 17,
-                                              currentPageIndex: 0
-                                            );
-                                          Navigator.pushReplacement(  
-                                            context,
-                                            MaterialPageRoute(builder: (context) => OliBarrettTravelPage(constructor)),
-                                          );
-                                        }
-                                      }
-                                  ),
-                                ]
-                              )
-                            ),
-                          ],
-                        ),
-                      ),
-        
-                      // ■ 18_sharmeleon
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Row(
-                          children: [
-                            // アイコン
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 10
-                              ),
-                              child: Icon(Icons.chevron_right_rounded,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                            ),
-                            // リンク部分
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  // カスケード記法（..）を使用
-                                  // = が挟まっているのは
-                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
-                                  // その値として応答関数を代入してる
-                                  TextSpan(
-                                    text: '1-準1級: Sharmeleon',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 17.5,
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        if (flagNumber != 18 && context.mounted) {
-                                          PageTransitionConstructor? constructor =
-                                          PageTransitionConstructor(
-                                              flagNumber: 18,
-                                              currentPageIndex: 0
-                                            );
-                                          Navigator.pushReplacement(  
-                                            context,
-                                            MaterialPageRoute(builder: (context) => SharmeleonPage(constructor)),
-                                          );
-                                        }
-                                      }
-                                  ),
-                                ]
-                              )
-                            ),
-                          ],
-                        ),
-                      ),
         
                       // ■ 19_unreal_engine_jp
                       Padding(
@@ -799,60 +693,8 @@ class CustomOverlayPortal extends StatelessWidget {
                         ),
                       ),
         
-                      // ■ 20_currently_hannah
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Row(
-                          children: [
-                            // アイコン
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 10
-                              ),
-                              child: Icon(Icons.chevron_right_rounded,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                            ),
-                            // リンク部分
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  // カスケード記法（..）を使用
-                                  // = が挟まっているのは
-                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
-                                  // その値として応答関数を代入してる
-                                  TextSpan(
-                                    text: '1-準1級: Currently Hannah',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 17.5,
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        if (flagNumber != 20 && context.mounted) {
-                                          PageTransitionConstructor? constructor =
-                                          PageTransitionConstructor(
-                                              flagNumber: 20,
-                                              currentPageIndex: 0
-                                            );
-                                          Navigator.pushReplacement(  
-                                            context,
-                                            MaterialPageRoute(builder: (context) => CurrentlyHannahPage(constructor)),
-                                          );
-                                        }
-                                      }
-                                  ),
-                                ]
-                              )
-                            ),
-                          ],
-                        ),
-                      ),
                  
-                      // ■ 21_here_is_good
+                      // ■ 21_trip_vlog
                       Padding(
                         padding: const EdgeInsets.only(top: 30),
                         child: Row(
@@ -877,7 +719,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                   // TapGestureRecognizerクラスに onTap プロパティがあるので
                                   // その値として応答関数を代入してる
                                   TextSpan(
-                                    text: '1-準1級: Here\'s Good',
+                                    text: '1-準1級: 旅 & Vlog系',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 17.5,
@@ -893,7 +735,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                             );
                                           Navigator.pushReplacement(  
                                             context,
-                                            MaterialPageRoute(builder: (context) => HereIsGoodPage(constructor)),
+                                            MaterialPageRoute(builder: (context) => TripVlogPage(constructor)),
                                           );
                                         }
                                       }
@@ -905,58 +747,58 @@ class CustomOverlayPortal extends StatelessWidget {
                         ),
                       ),
         
-                      // ■ 23_tales_from_our_pocket
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Row(
-                          children: [
-                            // アイコン
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 10
-                              ),
-                              child: Icon(Icons.chevron_right_rounded,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                            ),
-                            // リンク部分
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  // カスケード記法（..）を使用
-                                  // = が挟まっているのは
-                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
-                                  // その値として応答関数を代入してる
-                                  TextSpan(
-                                    text: '1-準1級: Tales From Our Pocket',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 17.5,
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        if (flagNumber != 23 && context.mounted) {
-                                          PageTransitionConstructor? constructor =
-                                          PageTransitionConstructor(
-                                              flagNumber: 23,
-                                              currentPageIndex: 0
-                                            );
-                                          Navigator.pushReplacement(  
-                                            context,
-                                            MaterialPageRoute(builder: (context) => TalesFromOurPocketPage(constructor)),
-                                          );
-                                        }
-                                      }
-                                  ),
-                                ]
-                              )
-                            ),
-                          ],
-                        ),
-                      ),
+                      // // ■ 23_tales_from_our_pocket
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 30),
+                      //   child: Row(
+                      //     children: [
+                      //       // アイコン
+                      //       const Padding(
+                      //         padding: EdgeInsets.only(
+                      //           left: 30,
+                      //           right: 10
+                      //         ),
+                      //         child: Icon(Icons.chevron_right_rounded,
+                      //           color: Colors.white,
+                      //           size: 25,
+                      //         ),
+                      //       ),
+                      //       // リンク部分
+                      //       RichText(
+                      //         text: TextSpan(
+                      //           children: [
+                      //             // カスケード記法（..）を使用
+                      //             // = が挟まっているのは
+                      //             // TapGestureRecognizerクラスに onTap プロパティがあるので
+                      //             // その値として応答関数を代入してる
+                      //             TextSpan(
+                      //               text: '1-準1級: Tales From Our Pocket',
+                      //               style: const TextStyle(
+                      //                 color: Colors.white,
+                      //                 fontSize: 17.5,
+                      //                 fontWeight: FontWeight.bold
+                      //               ),
+                      //               recognizer: TapGestureRecognizer()
+                      //                 ..onTap = () {
+                      //                   if (flagNumber != 23 && context.mounted) {
+                      //                     PageTransitionConstructor? constructor =
+                      //                     PageTransitionConstructor(
+                      //                         flagNumber: 23,
+                      //                         currentPageIndex: 0
+                      //                       );
+                      //                     Navigator.pushReplacement(  
+                      //                       context,
+                      //                       MaterialPageRoute(builder: (context) => TalesFromOurPocketPage(constructor)),
+                      //                     );
+                      //                   }
+                      //                 }
+                      //             ),
+                      //           ]
+                      //         )
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
 
                       // ■ 24_glitch
                       Padding(
@@ -983,7 +825,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                   // TapGestureRecognizerクラスに onTap プロパティがあるので
                                   // その値として応答関数を代入してる
                                   TextSpan(
-                                    text: '1-2級[アニメ]: グリッチ',
+                                    text: '1-2級: [アニメ] グリッチ',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 17.5,
@@ -1169,19 +1011,7 @@ class CustomOverlayPortal extends StatelessWidget {
                           ],
                         ),
                       ),
-        
-                      const SizedBox(height: 50)
-                    ]
-                  ),
-                ),
-        
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  
+
                       // ■ 11_abroad_in_japan
                       Padding(
                         padding: const EdgeInsets.only(top: 30),
@@ -1340,6 +1170,18 @@ class CustomOverlayPortal extends StatelessWidget {
                           ],
                         ),
                       ),
+        
+                      const SizedBox(height: 50)
+                    ]
+                  ),
+                ),
+        
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
                       // ■ 27_quality_of_english_life
                       Padding(
@@ -1447,6 +1289,219 @@ class CustomOverlayPortal extends StatelessWidget {
                         ),
                       ),
 
+                      // ■ 20_healing
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Row(
+                          children: [
+                            // アイコン
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 30,
+                                right: 10
+                              ),
+                              child: Icon(Icons.chevron_right_rounded,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                            // リンク部分
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  // カスケード記法（..）を使用
+                                  // = が挟まっているのは
+                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
+                                  // その値として応答関数を代入してる
+                                  TextSpan(
+                                    text: '2級: ヒーリング系',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17.5,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        if (flagNumber != 20 && context.mounted) {
+                                          PageTransitionConstructor? constructor =
+                                          PageTransitionConstructor(
+                                              flagNumber: 20,
+                                              currentPageIndex: 0
+                                            );
+                                          Navigator.pushReplacement(  
+                                            context,
+                                            MaterialPageRoute(builder: (context) => HealingPage(constructor)),
+                                          );
+                                        }
+                                      }
+                                  ),
+                                ]
+                              )
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // ■ 17_eiga_com
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Row(
+                          children: [
+                            // アイコン
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 30,
+                                right: 10
+                              ),
+                              child: Icon(Icons.chevron_right_rounded,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                            // リンク部分
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  // カスケード記法（..）を使用
+                                  // = が挟まっているのは
+                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
+                                  // その値として応答関数を代入してる
+                                  TextSpan(
+                                    text: '2級: 映画.com',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17.5,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        if (flagNumber != 17 && context.mounted) {
+                                          PageTransitionConstructor? constructor =
+                                          PageTransitionConstructor(
+                                              flagNumber: 17,
+                                              currentPageIndex: 0
+                                            );
+                                          Navigator.pushReplacement(  
+                                            context,
+                                            MaterialPageRoute(builder: (context) => EigaComPage(constructor)),
+                                          );
+                                        }
+                                      }
+                                  ),
+                                ]
+                              )
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // ■ 28_anime_cg
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Row(
+                          children: [
+                            // アイコン
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 30,
+                                right: 10
+                              ),
+                              child: Icon(Icons.chevron_right_rounded,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                            // リンク部分
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  // カスケード記法（..）を使用
+                                  // = が挟まっているのは
+                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
+                                  // その値として応答関数を代入してる
+                                  TextSpan(
+                                    text: '2級: [アニメ] CG系',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17.5,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        if (flagNumber != 28 && context.mounted) {
+                                          PageTransitionConstructor? constructor =
+                                          PageTransitionConstructor(
+                                              flagNumber: 28,
+                                              currentPageIndex: 0
+                                            );
+                                          Navigator.pushReplacement(  
+                                            context,
+                                            MaterialPageRoute(builder: (context) => AnimeCGPage(constructor)),
+                                          );
+                                        }
+                                      }
+                                  ),
+                                ]
+                              )
+                            ),
+                          ],
+                        ),
+                      ),
+
+        
+                      // ■ 18_anime_ illustration
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Row(
+                          children: [
+                            // アイコン
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 30,
+                                right: 10
+                              ),
+                              child: Icon(Icons.chevron_right_rounded,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                            // リンク部分
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  // カスケード記法（..）を使用
+                                  // = が挟まっているのは
+                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
+                                  // その値として応答関数を代入してる
+                                  TextSpan(
+                                    text: '2級: [アニメ] イラスト系',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17.5,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        if (flagNumber != 18 && context.mounted) {
+                                          PageTransitionConstructor? constructor =
+                                          PageTransitionConstructor(
+                                              flagNumber: 18,
+                                              currentPageIndex: 0
+                                            );
+                                          Navigator.pushReplacement(  
+                                            context,
+                                            MaterialPageRoute(builder: (context) => AnimeIllustrationPage(constructor)),
+                                          );
+                                        }
+                                      }
+                                  ),
+                                ]
+                              )
+                            ),
+                          ],
+                        ),
+                      ),
+
                       // ■ 22_samurai_junjiro_channel
                       Padding(
                         padding: const EdgeInsets.only(top: 30),
@@ -1500,62 +1555,7 @@ class CustomOverlayPortal extends StatelessWidget {
                         ),
                       ),
         
-        
-
-        
-        
-                      // ■ 28_service_english
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Row(
-                          children: [
-                            // アイコン
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 10
-                              ),
-                              child: Icon(Icons.chevron_right_rounded,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                            ),
-                            // リンク部分
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  // カスケード記法（..）を使用
-                                  // = が挟まっているのは
-                                  // TapGestureRecognizerクラスに onTap プロパティがあるので
-                                  // その値として応答関数を代入してる
-                                  TextSpan(
-                                    text: '2-3級: 接客英語、おもてなし英語',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 17.5,
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        if (flagNumber != 28 && context.mounted) {
-                                          PageTransitionConstructor? constructor =
-                                          PageTransitionConstructor(
-                                              flagNumber: 28,
-                                              currentPageIndex: 0
-                                            );
-                                          Navigator.pushReplacement(  
-                                            context,
-                                            MaterialPageRoute(builder: (context) => ServiceEnglishPage(constructor)),
-                                          );
-                                        }
-                                      }
-                                  ),
-                                ]
-                              )
-                            ),
-                          ],
-                        ),
-                      ),
+  
 
                       // ■ 12_pinkfong
                       Padding(
@@ -1582,7 +1582,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                   // TapGestureRecognizerクラスに onTap プロパティがあるので
                                   // その値として応答関数を代入してる
                                   TextSpan(
-                                    text: '準2-3級[アニメ]: 世界名作童話',
+                                    text: '準2-3級: [アニメ] 世界名作童話',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 17.5,
@@ -2504,7 +2504,7 @@ class CustomOverlayPortal extends StatelessWidget {
             ),
           ),
 
-          // ■ 16_life where im from
+          // ■ 16_documentary
           Padding(
             padding: const EdgeInsets.only(top: 30),
             child: Row(
@@ -2529,7 +2529,7 @@ class CustomOverlayPortal extends StatelessWidget {
                       // TapGestureRecognizerクラスに onTap プロパティがあるので
                       // その値として応答関数を代入してる
                       TextSpan(
-                        text: 'Life Where im From',
+                        text: 'ドキュメンタリー系',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 17.5,
@@ -2545,7 +2545,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 );
                               Navigator.pushReplacement(  
                                 context,
-                                MaterialPageRoute(builder: (context) => LifeWhereImFromPage(constructor)),
+                                MaterialPageRoute(builder: (context) => DocumentaryPage(constructor)),
                               );
                             }
                           }
@@ -2582,7 +2582,7 @@ class CustomOverlayPortal extends StatelessWidget {
                       // TapGestureRecognizerクラスに onTap プロパティがあるので
                       // その値として応答関数を代入してる
                       TextSpan(
-                        text: 'Oli Barrett Travel',
+                        text: '映画.com',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 17.5,
@@ -2598,7 +2598,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 );
                               Navigator.pushReplacement(  
                                 context,
-                                MaterialPageRoute(builder: (context) => OliBarrettTravelPage(constructor)),
+                                MaterialPageRoute(builder: (context) => EigaComPage(constructor)),
                               );
                             }
                           }
@@ -2651,7 +2651,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 );
                               Navigator.pushReplacement(  
                                 context,
-                                MaterialPageRoute(builder: (context) => SharmeleonPage(constructor)),
+                                MaterialPageRoute(builder: (context) => AnimeIllustrationPage(constructor)),
                               );
                             }
                           }
@@ -2716,7 +2716,7 @@ class CustomOverlayPortal extends StatelessWidget {
             ),
           ),
       
-          // ■ 20_currently_hannah
+          // ■ 20_healing
           Padding(
             padding: const EdgeInsets.only(top: 30),
             child: Row(
@@ -2741,7 +2741,7 @@ class CustomOverlayPortal extends StatelessWidget {
                       // TapGestureRecognizerクラスに onTap プロパティがあるので
                       // その値として応答関数を代入してる
                       TextSpan(
-                        text: 'Currently Hannah',
+                        text: 'ヒーリング系',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 17.5,
@@ -2757,7 +2757,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 );
                               Navigator.pushReplacement(  
                                 context,
-                                MaterialPageRoute(builder: (context) => CurrentlyHannahPage(constructor)),
+                                MaterialPageRoute(builder: (context) => HealingPage(constructor)),
                               );
                             }
                           }
@@ -2810,7 +2810,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                 );
                               Navigator.pushReplacement(  
                                 context,
-                                MaterialPageRoute(builder: (context) => HereIsGoodPage(constructor)),
+                                MaterialPageRoute(builder: (context) => TripVlogPage(constructor)),
                               );
                             }
                           }
@@ -2953,7 +2953,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                   // TapGestureRecognizerクラスに onTap プロパティがあるので
                                   // その値として応答関数を代入してる
                                   TextSpan(
-                                    text: '1-2級[アニメ]: グリッチ',
+                                    text: '1-2級: [アニメ] グリッチ',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 17.5,
@@ -3165,7 +3165,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                   // TapGestureRecognizerクラスに onTap プロパティがあるので
                                   // その値として応答関数を代入してる
                                   TextSpan(
-                                    text: '2-3級: 接客英語、おもてなし英語',
+                                    text: '2級: [アニメ] CG系',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 17.5,
@@ -3181,7 +3181,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                             );
                                           Navigator.pushReplacement(  
                                             context,
-                                            MaterialPageRoute(builder: (context) => ServiceEnglishPage(constructor)),
+                                            MaterialPageRoute(builder: (context) => AnimeCGPage(constructor)),
                                           );
                                         }
                                       }

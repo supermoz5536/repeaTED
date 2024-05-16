@@ -9,15 +9,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class OliBarrettTravelPage extends ConsumerStatefulWidget {
+class DocumentaryPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const OliBarrettTravelPage(this.transitionConstructor, {super.key});
+  const DocumentaryPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<OliBarrettTravelPage> createState() => _OliBarrettTravelPageState();
+  ConsumerState<DocumentaryPage> createState() => _DocumentaryPageState();
 }
 
-class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
+class _DocumentaryPageState extends ConsumerState<DocumentaryPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -40,7 +40,7 @@ class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadOliBarrettTravel().then((result) {
+      futureList = Video.loadDocumentary().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -81,7 +81,7 @@ class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 17,
+          flagNumber: 16,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('TraceSpeaker 英→日 BETA版',
@@ -574,7 +574,7 @@ class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 17,
+                                flagNumber: 16,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -606,7 +606,7 @@ class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 17,
+                                flagNumber: 16,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -703,7 +703,7 @@ class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'Oli Barrett Travelの一覧',
+                        'ドキュメンタリー系の一覧',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -927,7 +927,7 @@ class _OliBarrettTravelPageState extends ConsumerState<OliBarrettTravelPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 17,
+                                    flagNumber: 16,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ

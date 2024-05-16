@@ -9,15 +9,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class SharmeleonPage extends ConsumerStatefulWidget {
+class AnimeCGPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const SharmeleonPage(this.transitionConstructor, {super.key});
+  const AnimeCGPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<SharmeleonPage> createState() => _SharmeleonPageState();
+  ConsumerState<AnimeCGPage> createState() => _AnimeCGPageState();
 }
 
-class _SharmeleonPageState extends ConsumerState<SharmeleonPage> {
+class _AnimeCGPageState extends ConsumerState<AnimeCGPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -40,7 +40,7 @@ class _SharmeleonPageState extends ConsumerState<SharmeleonPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadSharmeleon().then((result) {
+      futureList = Video.loadAnimeCG().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -81,7 +81,7 @@ class _SharmeleonPageState extends ConsumerState<SharmeleonPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 18,
+          flagNumber: 28,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('TraceSpeaker 英→日 BETA版',
@@ -574,7 +574,7 @@ class _SharmeleonPageState extends ConsumerState<SharmeleonPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 18,
+                                flagNumber: 28,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -606,7 +606,7 @@ class _SharmeleonPageState extends ConsumerState<SharmeleonPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 18,
+                                flagNumber: 28,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -703,7 +703,7 @@ class _SharmeleonPageState extends ConsumerState<SharmeleonPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'Sharmeleonの一覧',
+                        '[アニメ]CG系',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -927,7 +927,7 @@ class _SharmeleonPageState extends ConsumerState<SharmeleonPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 18,
+                                    flagNumber: 28,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ

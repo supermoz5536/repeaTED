@@ -9,15 +9,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class HereIsGoodPage extends ConsumerStatefulWidget {
+class AnimeIllustrationPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const HereIsGoodPage(this.transitionConstructor, {super.key});
+  const AnimeIllustrationPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<HereIsGoodPage> createState() => _HereIsGoodPageState();
+  ConsumerState<AnimeIllustrationPage> createState() => _AnimeIllustrationPageState();
 }
 
-class _HereIsGoodPageState extends ConsumerState<HereIsGoodPage> {
+class _AnimeIllustrationPageState extends ConsumerState<AnimeIllustrationPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -40,7 +40,7 @@ class _HereIsGoodPageState extends ConsumerState<HereIsGoodPage> {
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadHereIsGood().then((result) {
+      futureList = Video.loadAnimeIllustration().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -81,7 +81,7 @@ class _HereIsGoodPageState extends ConsumerState<HereIsGoodPage> {
       appBar: AppBar(
         leading: CustomOverlayPortal(
           customController:  _overlayController1st,
-          flagNumber: 21,
+          flagNumber: 18,
           currentPageIndex: currentPageIndex,
         ),
         title: const Text('TraceSpeaker 英→日 BETA版',
@@ -574,7 +574,7 @@ class _HereIsGoodPageState extends ConsumerState<HereIsGoodPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 21,
+                                flagNumber: 18,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -606,7 +606,7 @@ class _HereIsGoodPageState extends ConsumerState<HereIsGoodPage> {
                             WatchPageConstructor watchConstructor = 
                               WatchPageConstructor(
                                 videoId: videoId,
-                                flagNumber: 21,
+                                flagNumber: 18,
                                 currentPageIndex: currentPageIndex
                               );
                             /// 画面遷移に必要なコンストラクタ
@@ -703,7 +703,7 @@ class _HereIsGoodPageState extends ConsumerState<HereIsGoodPage> {
                     padding: EdgeInsets.all(15.0),
                     child: Center(
                       child: Text(
-                        'Here\'s Goodの一覧',
+                        '[アニメ]イラスト系',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -927,7 +927,7 @@ class _HereIsGoodPageState extends ConsumerState<HereIsGoodPage> {
                                 WatchPageConstructor watchConstructor = 
                                   WatchPageConstructor(
                                     videoId: currentVideo.videoId,
-                                    flagNumber: 21,
+                                    flagNumber: 18,
                                     currentPageIndex: currentPageIndex
                                   );
                                 /// 画面遷移に必要なコンストラクタ
