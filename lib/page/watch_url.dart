@@ -156,7 +156,7 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
         }).toList();  
 
         captionTrackLength = captions.ja.length;
-        print('内容 == ${captions.ja[1]}');
+        print('内容 == ${captions.ja}');
       }
     }).then((value) {
       // キャプションデータのロード処理を
@@ -304,10 +304,20 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
           String? japaneseText = Utility.extractJapaneseText(captionsJa[currentCaptionIndex]['text']);
           print('2 読み上げの englishText == ${japaneseText}');
 
-          await Future.delayed(const Duration(milliseconds: 400));
+          // textが空文字でない場合は、ttsの読み上げ処理へ
+          if (japaneseText != '') {
+            await Future.delayed(const Duration(milliseconds: 400));
+            await tts.speak(japaneseText!);
 
-          // TTSでキャプションの読み上げ
-          await tts.speak(japaneseText!);
+          // textが空文字の場合は、
+          // currentのカウントだけ行って、読み上げやシーク処理はスキップして
+          // 重複して再生されるのを避ける
+          } else {
+            currentCaptionIndex = currentCaptionIndex! + 1;
+            await iFrameController.playVideo();
+          }
+          
+          
         }
       }
 
