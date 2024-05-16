@@ -131,7 +131,7 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
     // 実際のクローズドキャプショントラック（字幕データ）を非同期で取得します。
     // get(trackInfo)メソッドは
     // 指定した字幕トラック情報に基づいて字幕データを返します。
-    CloudFunctions.callGetCaptions(videoId).then((captions) {
+    CloudFunctions.callGetCaptionsURL(videoId).then((captions) {
 
       // キャプションの取得に失敗したらトップページへ画面遷移
       if (captions == null && context.mounted) {
