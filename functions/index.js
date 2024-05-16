@@ -65,10 +65,7 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
       find(captionTracks, {
         vssId: ".en-CA",
       }) ||
-      find(captionTracks, (track) => track.vssId.startsWith(".en")) ||
-      find(captionTracks, {
-        vssId: "a.en",
-      });
+      find(captionTracks, (track) => track.vssId.startsWith(".en"));
 
     // 字幕の検索処理の結果を判定します
     // !subtitle: 字幕が見つからなかった場合（nullの場合）
