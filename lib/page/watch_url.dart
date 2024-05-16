@@ -105,6 +105,7 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
   @override
   void initState() {
     super.initState();
+    print('WatchURLPage initState');
     videoId = widget.watchConstructor!.videoId;
     flagNumber = widget.watchConstructor!.flagNumber;
     currentPageIndex = widget.watchConstructor!.currentPageIndex;

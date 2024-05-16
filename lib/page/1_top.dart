@@ -759,7 +759,7 @@ class _TopPageState extends ConsumerState<TopPage> {
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(builder: (context)
-                                    => WatchURLPage(watchConstructor)),
+                                    => WatchPage(watchConstructor)),
                                   (_) => false);
                               },
                               child: SizedBox(

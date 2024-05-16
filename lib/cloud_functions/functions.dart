@@ -31,14 +31,14 @@ static Future<CaptionTracks?> callGetCaptionsURL(String? videoId) async {
     final HttpsCallableResult result = await callable.call({
       'videoId': videoId,
     });
-    Map<String, dynamic> mapResult = result.data as Map<String, dynamic>;
+    Map<String, dynamic> mapResult = result.data as Map<String, dynamic>;        
     CaptionTracks captions = CaptionTracks(
                                en: mapResult['en'] ?? [],
                                ja: mapResult['ja'] ?? [],
                              );
     return captions;
   } catch (error) {
-    print('callGetCaptions エラー == $error');
+    print('callGetCaptionsURL エラー == $error');
     return null;
   }
 }
