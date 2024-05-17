@@ -51,15 +51,15 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 // import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-class WatchPage extends ConsumerStatefulWidget {
+class WatchURLPage extends ConsumerStatefulWidget {
   final WatchPageConstructor? watchConstructor;
-  const WatchPage(this.watchConstructor, {super.key});
+  const WatchURLPage(this.watchConstructor, {super.key});
 
   @override
-  ConsumerState<WatchPage> createState() => _LoungePageState();
+  ConsumerState<WatchURLPage> createState() => _WatchURLPageState();
 }
 
-class _LoungePageState extends ConsumerState<WatchPage> {
+class _WatchURLPageState extends ConsumerState<WatchURLPage> {
   // final _overlayController1st = OverlayPortalController();
   // final _overlayController2nd = OverlayPortalController();
   // final TextEditingController nameController = TextEditingController();
@@ -105,6 +105,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
   @override
   void initState() {
     super.initState();
+    print('WatchURLPage initState');
     videoId = widget.watchConstructor!.videoId;
     flagNumber = widget.watchConstructor!.flagNumber;
     currentPageIndex = widget.watchConstructor!.currentPageIndex;
@@ -131,7 +132,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
     // 実際のクローズドキャプショントラック（字幕データ）を非同期で取得します。
     // get(trackInfo)メソッドは
     // 指定した字幕トラック情報に基づいて字幕データを返します。
-    CloudFunctions.callGetCaptions(videoId).then((captions) {
+    CloudFunctions.callGetCaptionsURL(videoId).then((captions) {
 
       // キャプションの取得に失敗したらトップページへ画面遷移
       if (captions == null && context.mounted) {
@@ -155,7 +156,7 @@ class _LoungePageState extends ConsumerState<WatchPage> {
         }).toList();  
 
         captionTrackLength = captions.ja.length;
-        print('内容 == ${captions.ja[1]}');
+        print('内容 == ${captions.ja}');
       }
     }).then((value) {
       // キャプションデータのロード処理を
@@ -305,10 +306,20 @@ class _LoungePageState extends ConsumerState<WatchPage> {
           String? japaneseText = Utility.extractJapaneseText(captionsJa[currentCaptionIndex]['text']);
           print('2 読み上げの englishText == ${japaneseText}');
 
-          await Future.delayed(const Duration(milliseconds: 400));
+          // textが空文字でない場合は、ttsの読み上げ処理へ
+          if (japaneseText != '') {
+            await Future.delayed(const Duration(milliseconds: 400));
+            await tts.speak(japaneseText!);
 
-          // TTSでキャプションの読み上げ
-          await tts.speak(japaneseText!);
+          // textが空文字の場合は、
+          // currentのカウントだけ行って、読み上げやシーク処理はスキップして
+          // 重複して再生されるのを避ける
+          } else {
+            currentCaptionIndex = currentCaptionIndex! + 1;
+            await iFrameController.playVideo();
+          }
+          
+          
         }
       }
 
