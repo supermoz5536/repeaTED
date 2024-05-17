@@ -11,15 +11,15 @@ import 'package:repea_ted/service/global_overlay_portal.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:repea_ted/service/video.dart';
 
-class LearnEnglishConversationInEnglishPage extends ConsumerStatefulWidget {
+class LearnEnglishPage extends ConsumerStatefulWidget {
   final PageTransitionConstructor? transitionConstructor;
-  const LearnEnglishConversationInEnglishPage(this.transitionConstructor, {super.key});
+  const LearnEnglishPage(this.transitionConstructor, {super.key});
 
   @override
-  ConsumerState<LearnEnglishConversationInEnglishPage> createState() => _LearnEnglishConversationInEnglishPageState();
+  ConsumerState<LearnEnglishPage> createState() => _LearnEnglishPageState();
 }
 
-class _LearnEnglishConversationInEnglishPageState extends ConsumerState<LearnEnglishConversationInEnglishPage> {
+class _LearnEnglishPageState extends ConsumerState<LearnEnglishPage> {
   bool isInputEmpty = true;
   String? url;
   String? videoId;
@@ -42,7 +42,7 @@ class _LearnEnglishConversationInEnglishPageState extends ConsumerState<LearnEng
     super.initState();
     currentPageIndex = widget.transitionConstructor!.currentPageIndex;
 
-      futureList = Video.loadLearnEnglishConversationInEnglish().then((result) {
+      futureList = Video.loadLearnEnglish().then((result) {
         if (result != null) {
           setState(() {
             wholeItems = result;
@@ -664,7 +664,7 @@ class _LearnEnglishConversationInEnglishPageState extends ConsumerState<LearnEng
                             ),
                           ),    
                           Text(
-                          '・英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、上からYoutube動画のURLを入力して利用できます。\n\n・日本語、もしくは英語の字幕のある動画なら、どちらも日本語に翻訳して読み上げます。\n\n・[auto-generated]の字幕しかない動画の読み上げ機能は、現在開発中です。',
+                          '・英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、上からYoutube動画のURLを入力して利用できます。\n\n・日本語、もしくは英語の字幕のある動画なら、どちらも日本語に翻訳して読み上げます。\n\n・動画URLを入力する際、利用可能な字幕が英語(自動生成)のみの動画は、翻訳が安定しない場合があるので予めご了承ください。',
                             style: TextStyle(
                               color: Colors.white,
                               // fontWeight: FontWeight.bold,

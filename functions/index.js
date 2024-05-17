@@ -13,6 +13,73 @@ const {find} = require("lodash");
 // 字幕のテキストから不要なHTMLタグを削除するために使用します。
 const striptags = require("striptags");
 
+/**
+ * キャプションを連結する関数
+ * @param {Array} captions - キャプションオブジェクトの配列
+ * @return {Array} 連結されたキャプションオブジェクトの配列
+ */
+function mergeCaptions(captions) {
+  // 出力ファイルの格納用の配列、return用
+  const mergedCaptions = [];
+  // ループ処理時の各連結タスクで用いる、ベースとなる作業用キャプション
+  let tempCaption = {start: null, dur: 0, text: ""};
+  // 現在のキャプション数をカウントする変数
+  let count = 0;
+
+  // キャプションの配列をループで処理
+  for (let i = 0; i < captions.length; i++) {
+    const caption = captions[i];
+
+    // 一時的な開始時間が設定されていない場合、現在のキャプションの開始時間を設定
+    // 一時的なキャプションオブジェクトに、現在のキャプションのテキストを結合
+    // 一時的なキャプションオブジェクトに、現在のキャプションの持続時間を浮動小数点数にパースして累積追加
+    if (tempCaption.start === null) {
+      tempCaption.start = caption.start;
+    }
+    tempCaption.text += caption.text;
+    if (caption.text !== "") {
+      tempCaption.dur += parseFloat(caption.dur) - 2.25;
+    }
+    // 現在のキャプション数をインクリメントし
+    // 次のキャプションの判定処理に移る
+    count++;
+
+    // 現在のキャプションが文の終わりかどうかをチェック
+    const isEndOfSentence = caption.text.includes("。");
+    // 次のキャプションが空かどうかをチェック
+    const isEmpty = i < captions.length - 1 && captions[i + 1].text === "";
+    // 連結されるキャプション数が合計3つに達したかどうかをチェック
+    const isMaxCount = count === 2;
+
+    // "。"が含まれる、textが空、判断してる行が3つ目に達した場合
+    if (isEndOfSentence || isEmpty || isMaxCount) {
+      // start と dur を文字列に変換
+      const parsedCaption = {
+        start: tempCaption.start.toString(),
+        dur: tempCaption.dur.toString(),
+        text: tempCaption.text,
+      };
+
+      // 一時的なキャプションオブジェクトをコピーして連結キャプション配列に追加
+      mergedCaptions.push({...parsedCaption});
+      // 一時的なキャプションオブジェクトを初期化
+      tempCaption = {start: null, dur: 0, text: ""};
+      // キャプション数をリセット
+      count = 0;
+    }
+  }
+
+  // ループ処理がキリの悪いところで終わってしまったために
+  // 残っている一時的なキャプションを
+  // テキストが空出ないなら最後に追加
+  if (tempCaption.text) {
+    mergedCaptions.push({...tempCaption});
+  }
+
+  // 連結処理を施したキャプション配列を返す
+  return mergedCaptions;
+}
+
 
 exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
   const videoId = data.videoId;
@@ -65,7 +132,10 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
       find(captionTracks, {
         vssId: ".en-CA",
       }) ||
-      find(captionTracks, (track) => track.vssId.startsWith(".en"));
+      find(captionTracks, (track) => track.vssId.startsWith(".en")) ||
+      find(captionTracks, {
+        vssId: "a.en",
+      });
 
     // 字幕の検索処理の結果を判定します
     // !subtitle: 字幕が見つからなかった場合（nullの場合）
@@ -85,7 +155,7 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
 
     const transcript = transcriptResponse.data;
 
-    const lines = transcript
+    let lines = transcript
     // transcriptの文字列から、必要のないシステムメッセージの
     // XMLヘッダー<?xml version="1.0" encoding="utf-8" ?><transcript>
     // を空文字に書き換えて削除します。
@@ -120,6 +190,9 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
             text,
           };
         });
+    if (subtitle.vssId === "a.en") {
+      lines = mergeCaptions(lines);
+    }
 
     // 以下でMap型のresultsに格納されます。
     // キー：language

@@ -19,7 +19,7 @@ import 'package:repea_ted/page/22_samurai_junjiro_channel.dart';
 import 'package:repea_ted/page/23_tales_from_our_pocket.dart';
 import 'package:repea_ted/page/24_glitch.dart';
 import 'package:repea_ted/page/25_good_kids.dart';
-import 'package:repea_ted/page/26_learn_english_conversation_in_english.dart';
+import 'package:repea_ted/page/26_learn_english.dart';
 import 'package:repea_ted/page/27_quality_of_english_life.dart';
 import 'package:repea_ted/page/28_anime_cg.dart';
 import 'package:repea_ted/page/7_original_content.dart';
@@ -108,11 +108,15 @@ class CustomOverlayPortal extends StatelessWidget {
     }
 
   Scrollbar listForPC(BuildContext context) {
+    ScrollController scrollController = ScrollController();
+
     return Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
       thickness: 10,
+      controller: scrollController,
       child: SingleChildScrollView(
+        controller: scrollController, 
         child: Column(
           children: [
           
@@ -1236,7 +1240,7 @@ class CustomOverlayPortal extends StatelessWidget {
                         ),
                       ),
       
-                      // ■ 26_learn_english_conversation_in_english
+                      // ■ 26_learn_english
                       Padding(
                         padding: const EdgeInsets.only(top: 30),
                         child: Row(
@@ -1261,7 +1265,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                   // TapGestureRecognizerクラスに onTap プロパティがあるので
                                   // その値として応答関数を代入してる
                                   TextSpan(
-                                    text: '準1-準2級: 英語で学ぶ英会話',
+                                    text: '2級: 英語を学ぶ系',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 17.5,
@@ -1277,7 +1281,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                             );
                                           Navigator.pushReplacement(  
                                             context,
-                                            MaterialPageRoute(builder: (context) => LearnEnglishConversationInEnglishPage(constructor)),
+                                            MaterialPageRoute(builder: (context) => LearnEnglishPage(constructor)),
                                           );
                                         }
                                       }
@@ -3075,7 +3079,7 @@ class CustomOverlayPortal extends StatelessWidget {
                                             );
                                           Navigator.pushReplacement(  
                                             context,
-                                            MaterialPageRoute(builder: (context) => LearnEnglishConversationInEnglishPage(constructor)),
+                                            MaterialPageRoute(builder: (context) => LearnEnglishPage(constructor)),
                                           );
                                         }
                                       }

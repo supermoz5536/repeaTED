@@ -31,7 +31,7 @@ import 'package:repea_ted/page/22_samurai_junjiro_channel.dart';
 import 'package:repea_ted/page/23_tales_from_our_pocket.dart';
 import 'package:repea_ted/page/24_glitch.dart';
 import 'package:repea_ted/page/25_good_kids.dart';
-import 'package:repea_ted/page/26_learn_english_conversation_in_english.dart';
+import 'package:repea_ted/page/26_learn_english.dart';
 import 'package:repea_ted/page/27_quality_of_english_life.dart';
 import 'package:repea_ted/page/28_anime_cg.dart';
 import 'package:repea_ted/page/7_original_content.dart';
@@ -258,6 +258,8 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
           // print('▲ 3 該当キャプションの dur値の確認: ${(captionsJa[currentCaptionIndex]['dur'])}');
           // 'dur'の値が文字列で数字表記になっているので
           // 型のキャスト String → double
+
+          print('▲▲▲▲▲▲▲ 型: ${captionsJa[currentCaptionIndex]['dur'].runtimeType}'); // durの型をプリント
           durationTime = double.parse(captionsJa[currentCaptionIndex]['dur']);
           // print('▲ 4 durationTimeの代入後の値: ${(captionsJa[currentCaptionIndex]['dur'])}');
           print('playbackRate == ${iFrameController.value.playbackRate}');
@@ -870,7 +872,7 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
                                   break;
 
                                 case 26:
-                                  nextPage = LearnEnglishConversationInEnglishPage(PageTransitionConstructor(
+                                  nextPage = LearnEnglishPage(PageTransitionConstructor(
                                     flagNumber: 26,
                                     currentPageIndex: currentPageIndex
                                   ));
