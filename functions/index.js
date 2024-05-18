@@ -30,29 +30,36 @@ function mergeCaptions(captions) {
   for (let i = 0; i < captions.length; i++) {
     const caption = captions[i];
 
-    // 一時的な開始時間が設定されていない場合、現在のキャプションの開始時間を設定
-    // 一時的なキャプションオブジェクトに、現在のキャプションのテキストを結合
-    // 一時的なキャプションオブジェクトに、現在のキャプションの持続時間を浮動小数点数にパースして累積追加
-    if (tempCaption.start === null) {
-      tempCaption.start = caption.start;
-    }
-    tempCaption.text += caption.text;
     if (caption.text !== "") {
-      tempCaption.dur += parseFloat(caption.dur) - 2.25;
+      // 次のキャプションの判定処理のために
+      // カウント数をインクリメントする
+      count++;
+      // 一時的な開始時間が設定されていない場合、現在のキャプションの開始時間を設定
+      // 一時的なキャプションオブジェクトに、現在のキャプションのテキストを結合
+      // 一時的なキャプションオブジェクトに、現在のキャプションの持続時間を浮動小数点数にパースして累積追加
+      if (tempCaption.start === null) {
+        tempCaption.start = caption.start;
+      }
+      tempCaption.text += caption.text;
+      tempCaption.dur += parseFloat(caption.dur) - 1.5;
+      // 連結してるにも関わらず、durが不足してる場合は
+      // 再生時間を付け足して補強
+      if (count == 1 && tempCaption.dur < 2.0) {
+        tempCaption.dur += 1.5;
+      } else if (count == 1 && tempCaption.dur < 2.5) {
+        tempCaption.dur += 2;
+      } else if (count == 2 && tempCaption.dur < 3.5) {
+        tempCaption.dur += 3;
+      }
     }
-    // 現在のキャプション数をインクリメントし
-    // 次のキャプションの判定処理に移る
-    count++;
 
     // 現在のキャプションが文の終わりかどうかをチェック
     const isEndOfSentence = caption.text.includes("。");
-    // 次のキャプションが空かどうかをチェック
-    const isEmpty = i < captions.length - 1 && captions[i + 1].text === "";
     // 連結されるキャプション数が合計3つに達したかどうかをチェック
     const isMaxCount = count === 2;
 
-    // "。"が含まれる、textが空、判断してる行が3つ目に達した場合
-    if (isEndOfSentence || isEmpty || isMaxCount) {
+    // "。"が含まれる、キャプションの連結数が3つに達した場合
+    if (isEndOfSentence || isMaxCount) {
       // start と dur を文字列に変換
       const parsedCaption = {
         start: tempCaption.start.toString(),
@@ -135,6 +142,9 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
       find(captionTracks, (track) => track.vssId.startsWith(".en")) ||
       find(captionTracks, {
         vssId: "a.en",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.ja",
       });
 
     // 字幕の検索処理の結果を判定します
@@ -147,11 +157,12 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
       throw new Error(`Could not find captions for ${videoId}`);
     }
 
-    // vssIdが .ja の場合は、baseUrlをそのまま使用して字幕を取得
-    // vssIdが .ja でない時は、baseUrlの末尾に&tlang=jaを加えて日本語翻訳字幕を取得
-    const transcriptResponse = subtitle.vssId === ".ja" ?
-      await axios.get(subtitle.baseUrl) :
-      await axios.get(subtitle.baseUrl + "&tlang=ja");
+    // vssIdが 日本語の字幕 の場合は、baseUrlをそのまま使用して字幕を取得
+    // vssIdが 日本後の字幕 でない時は、baseUrlの末尾に&tlang=jaを加えて日本語翻訳字幕を取得
+    const transcriptResponse =
+      subtitle.vssId === ".ja" || subtitle.vssId === "a.ja" ?
+        await axios.get(subtitle.baseUrl) :
+        await axios.get(subtitle.baseUrl + "&tlang=ja");
 
     const transcript = transcriptResponse.data;
 
@@ -190,7 +201,7 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
             text,
           };
         });
-    if (subtitle.vssId === "a.en") {
+    if (subtitle.vssId === "a.en" || subtitle.vssId === "a.ja" ) {
       lines = mergeCaptions(lines);
     }
 

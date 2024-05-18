@@ -1176,7 +1176,7 @@ class _WaoRyuOnlyInJapanPageState extends ConsumerState<WaoRyuOnlyInJapanPage> {
     
   SnackBar customSnackBar() {
     return SnackBar(
-      duration: const Duration(milliseconds: 3500),
+      duration: const Duration(milliseconds: 5000),
       behavior: SnackBarBehavior.floating,
       margin: MediaQuery.of(context).size.width < 600
         ? const EdgeInsets.all(30)
@@ -1204,12 +1204,12 @@ class _WaoRyuOnlyInJapanPageState extends ConsumerState<WaoRyuOnlyInJapanPage> {
                 padding: const EdgeInsets.only(right: 10),
                 child: Center(
                   child: Text(
-                    '日本語字幕のない動画です。',
+                    '[英語以外の言語から生成された字幕を使用してる動画]には、対応していません。',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width < 600
                         ? 15
-                        : 25,
+                        : 20,
                       color: Colors.white,
                     ),),
                 ),
