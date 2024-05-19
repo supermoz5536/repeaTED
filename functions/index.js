@@ -40,26 +40,56 @@ function mergeCaptions(captions) {
       if (tempCaption.start === null) {
         tempCaption.start = caption.start;
       }
+      tempCaption.dur += parseFloat(caption.dur) - 1.8;
       tempCaption.text += caption.text;
-      tempCaption.dur += parseFloat(caption.dur) - 1.5;
-      // 連結してるにも関わらず、durが不足してる場合は
-      // 再生時間を付け足して補強
-      if (count == 1 && tempCaption.dur < 2.0) {
-        tempCaption.dur += 1.5;
-      } else if (count == 1 && tempCaption.dur < 2.5) {
-        tempCaption.dur += 2;
-      } else if (count == 2 && tempCaption.dur < 3.5) {
-        tempCaption.dur += 3;
-      }
     }
 
     // 現在のキャプションが文の終わりかどうかをチェック
     const isEndOfSentence = caption.text.includes("。");
     // 連結されるキャプション数が合計3つに達したかどうかをチェック
-    const isMaxCount = count === 2;
+    const isMaxCount = count === 3;
 
     // "。"が含まれる、キャプションの連結数が3つに達した場合
     if (isEndOfSentence || isMaxCount) {
+      // 再生時間の過不足を、連結数に応じて最後に調整
+      // 下限を下回る場合には +=
+      // 上限を上回る場合には -=
+      if (count == 1) {
+        // 低域の設定
+        if (tempCaption.dur < 2.0) {
+          tempCaption.dur += 1.75;
+        // 中高域の設定
+        } else if (tempCaption.dur >= 2.0) {
+          tempCaption.dur -= 0.45;
+        }
+      }
+
+      if (count == 2) {
+        // 低域の設定
+        if (tempCaption.dur < 2.5) {
+          tempCaption.dur += 2;
+        // 中域の設定
+        } else if (4.0 <= tempCaption.dur <= 5.0) {
+          tempCaption.dur += 0.5;
+        // 高域の設定
+        } else if (tempCaption.dur > 5.0) {
+          tempCaption.dur -= 2.5;
+        }
+      }
+
+      if (count == 3) {
+        // 低域の設定
+        if (tempCaption.dur < 3.5) {
+          tempCaption.dur += 2;
+        // 中域の設定
+        } else if (5.0 <= tempCaption.dur <= 7.0) {
+          tempCaption.dur += 0.5;
+        // 高域の設定
+        } else if (tempCaption.dur > 7.0) {
+          tempCaption.dur -= 2.5;
+        }
+      }
+
       // start と dur を文字列に変換
       const parsedCaption = {
         start: tempCaption.start.toString(),
@@ -72,7 +102,7 @@ function mergeCaptions(captions) {
       // 一時的なキャプションオブジェクトを初期化
       tempCaption = {start: null, dur: 0, text: ""};
       // キャプション数をリセット
-      count = 0;
+      count = 1;
     }
   }
 

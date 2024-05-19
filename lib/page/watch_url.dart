@@ -355,7 +355,7 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
 
       // 音量を70%に設定
       await tts.setVolume(0.85); 
-      await tts.setSpeechRate(0.9);
+      await tts.setSpeechRate(0.95);
 
 
     // 読み上げ完了時のコールバック設定
