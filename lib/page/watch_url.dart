@@ -340,19 +340,6 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
   /// TTSの環境設定とコールバック設定
   Future<void> initTTS() async {
 
-    // // iOS専用のオーディオを設定
-    // await tts.setSharedInstance(true); // 共有インスタンスを設定
-    // await tts.setIosAudioCategory(
-    //   IosTextToSpeechAudioCategory.playback,
-    //   [
-    //     IosTextToSpeechAudioCategoryOptions.allowBluetooth,
-    //     IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
-    //     IosTextToSpeechAudioCategoryOptions.mixWithOthers,
-    //     IosTextToSpeechAudioCategoryOptions.defaultToSpeaker
-    //   ],
-    //   IosTextToSpeechAudioMode.defaultMode
-    // ); 
-
       // 音量を70%に設定
       await tts.setVolume(0.85); 
       await tts.setSpeechRate(0.95);
@@ -934,7 +921,7 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
                             padding: EdgeInsets.all(15.0),
                             child: Center(
                               child: Text(
-                                '・「再生」「停止」「再生位置の調整」は、緑色枠内の専用プレイヤーで操作してください。\n\n・表示字幕の設定は、YouTubeのいつも通りの操作と同じです（動画右下の歯車マーク）\n\n・倍速再生にも対応しています。\n\n・動画が終了すると自動でループします。',
+                                '・「再生」「停止」「再生位置の調整」は、緑色枠内の専用プレイヤーで操作してください。\n\n・倍速再生と字幕設定は、YouTubeのいつも通りの操作です（動画右下の歯車マーク）\n\n・パソコン(推奨)：Chrome、Safari、MicroSoft Edgeで利用できます。\n\n・モバイル：Android 12〜14の一部機種のみで動作確認。iOSは非対応です。',
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.white

@@ -671,7 +671,7 @@ class _TopPageState extends ConsumerState<TopPage> {
                             ),
                           ),                          
                           Text(
-                          '・英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、上からYoutube動画のURLを入力して利用できます。\n\n・日本語、もしくは英語の字幕のある動画なら、どちらも日本語に翻訳して読み上げます。\n\n・動画URLを入力する際、利用可能な字幕が英語(自動生成)のみの動画は、翻訳が安定しない場合があるので予めご了承ください。',
+                          '・英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・日本語もしくは英語の字幕のある動画を、翻訳して日本語で読み上げます。\n\n・下に表示されてる動画のサムネイルをクリックするか、上からYoutube動画のURLを入力して利用できます。\n\n・動画URLを入力する場合、利用可能な字幕が英語(自動生成)のみの動画は、翻訳の安定しない時があるので予めご了承ください。',
                             style: TextStyle(
                               color: Colors.white,
                               // fontWeight: FontWeight.bold,
@@ -854,7 +854,7 @@ class _TopPageState extends ConsumerState<TopPage> {
                 padding: const EdgeInsets.only(right: 10),
                 child: Center(
                   child: Text(
-                    '[英語以外の言語から生成された字幕を使用してる動画]には、対応していません。',
+                    '[字幕の使えない動画]、[字幕を日本語と英語以外の言語から生成してる動画]は、未対応です',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width < 600
