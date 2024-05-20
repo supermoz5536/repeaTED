@@ -43,6 +43,8 @@ import 'package:repea_ted/page/4_ted_talk.dart';
 import 'package:repea_ted/page/1_top.dart';
 import 'package:repea_ted/page/8_tabi_eats.dart';
 import 'package:repea_ted/page/9_rachel_and_jun.dart';
+import 'package:repea_ted/riverpod/provider/speed_value_provider.dart';
+import 'package:repea_ted/riverpod/provider/volume_value_provider.dart';
 import 'package:repea_ted/service/utility.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -70,9 +72,11 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
   // var yt = YoutubeExplode();
   String? videoId;
   String? zeroTime;
+  // String? selectedVoice;
   // late ClosedCaptionManifest trackManifest;
   late PairCaption pairCaption;
   List<PairCaption>? pairCaptions = [];
+  // List<String>? voicesJa;
   bool? isUnStarted = false;
   bool? isPlaying = false;
   bool? isPaused = false;
@@ -81,6 +85,10 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
   bool? isManuallyPaused = false;
   bool isTraceSpeaker = true;
   bool isCanceled = false;
+  double? displayVolumeValue = 1.0;
+  double? displaySpeedValue = 1.0;
+  double? currentVolumeValue;
+  double? currentSpeedValue;
   int? flagNumber;
   int? currentPageIndex;
   int? currentCaptionIndex = 0;
@@ -124,10 +132,6 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
       ),
     );
 
-
-    // ■ TTSの初期化
-    initTTS();
-
     // ■ キャプションデータのロード
     // 実際のクローズドキャプショントラック（字幕データ）を非同期で取得します。
     // get(trackInfo)メソッドは
@@ -156,15 +160,20 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
         }).toList();  
 
         captionTrackLength = captions.ja.length;
-        print('内容 == ${captions.ja}');
+        // print('内容 == ${captions.ja}');
       }
     }).then((value) {
       // キャプションデータのロード処理を
       // 確実に待機してからリスナーを配置
       if (captionsJa != null) {
+        initTTS();
         addPlayerListener();
         setPollingForCurrentTime();
-      
+        // 一度だけ読み上げパラーメーターにProviderの値に与えて
+        // 以降はフェーダーの値を利用する
+        displayVolumeValue = currentVolumeValue;
+        displaySpeedValue = currentSpeedValue;
+
         setState(() {
           isLoading = false;  
         });
@@ -173,7 +182,6 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
       }
     });
   }
-
 
   /// YouTubePlayerの現在の再生位置を
   /// 再生速度のレートに合わせてポーリング
@@ -341,8 +349,8 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
   Future<void> initTTS() async {
 
       // 音量を70%に設定
-      await tts.setVolume(0.85); 
-      await tts.setSpeechRate(0.95);
+      await tts.setVolume(currentVolumeValue!); 
+      await tts.setSpeechRate(currentSpeedValue!);
 
 
     // 読み上げ完了時のコールバック設定
@@ -432,6 +440,35 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
     return lowestIndex;
   }
 
+  // /// TTSで利用可能なボイスのリストを取得する関数
+  // Future<void> getVoicesJa() async {
+  //   final voicesData = await tts.getVoices;
+  //   final List<dynamic> voicesListDynamic = voicesData as List<dynamic>;
+  //   final List<Map<String, dynamic>> voicesListMap =
+  //     voicesListDynamic.map((voice) {
+  //      return Map<String, dynamic>.from(voice);
+  //     }).toList();
+
+  //   voicesJa = voicesListMap
+  //                // voiceはリストの各要素 Map<String, dynamic>型 ßを表します。
+  //                // voice['locale'] == 'ja-JP'は、localeキーの値が'ja-JP'である要素のみを抽出します。
+  //                .where((voice) => voice['locale'] == 'ja-JP')
+  //                // voiceは、フィルタリングされた要素 Map<String, dynamic>型 を表します。
+  //                // voice['name'] as Stringは、
+  //                // 各マップからnameキーの値を抽出し、
+  //                // それをString型にキャストします。
+  //                .map((voice) => voice['name'] as String)
+  //                .toList();
+
+  //   print("object == $voicesData");
+    
+  //   setState(() {
+  //     selectedVoice = voicesJa!.isNotEmpty
+  //       ? voicesJa!.first
+  //       : null;
+  //   });
+  // }
+
   @override
   void dispose() {
     // showDialogNameController.removeListener(() {setState((){});});
@@ -450,6 +487,8 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
 
   @override
   Widget build(BuildContext context) {
+    currentVolumeValue = ref.watch(volumeValueProvider);
+    currentSpeedValue = ref.watch(speedValueProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -497,14 +536,16 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
 
                       // ■ Custom Player
                       SizedBox(
-                        height: 250,
+                        // height: 350,
+                        height: 185,
                         width: 400,
                         child: Card(
                           elevation: 8,
                           color: Colors.lightGreen,
                           child: Column(
                             children: [
-
+                              
+                              // ■ 再生ポジション
                               Slider(
                                 value: currentSliderValue!,
                                 min: 0,
@@ -538,7 +579,9 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
 
                               // ■ カウント                            
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                padding: const EdgeInsets.only(
+                                  bottom: 8.0
+                                ),
                                 child: Text('${formatDuration(currentSliderValue)} / ${formatDuration(totalDuration)}'),
                               ), 
 
@@ -619,60 +662,244 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
                                 ),
                               ),
 
-                              // ■ 読み上げON/OFF
-                              SwitchListTile(
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: MediaQuery.of(context).size.width < 600
-                                    ? 90
-                                    : 110
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      // ■ 読み上げ設定
+                      SizedBox(
+                        height: 160,
+                        width: 400,
+                        child: Card(
+                          elevation: 8,
+                          color: Colors.lightGreen,
+                          child: Column(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                  top: 12.5,
+                                  bottom: 8
                                 ),
-                                title: const Center(
-                                  child: Text('読み上げ機能',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold
-                                    ),
+                                child: Text('読み上げ設定',
+                                  style: TextStyle(
+                                    fontSize: 18,
                                   ),
                                 ),
-                                subtitle: const Center(child: Text('(ON/OFF)')),
-                                value: isTraceSpeaker,
-                                onChanged: (bool newValue) async{
-                                  setState(() {
-                                    isTraceSpeaker = newValue; 
-                                    isUnStarted = false;
-                                    isPlaying = false;
-                                    isPaused = false;
-                                    isManuallyPaused = true;
-                                  });
-
-                                  // コントローラー状態の変更を意図的に作り出し
-                                  // リスナーのループ意図的に入られる
-                                  if (iFrameController.value.playerState == PlayerState.playing) {
-                                    await iFrameController.pauseVideo();   
-                                    await iFrameController.playVideo();
-                                  } else {                                    
-                                    await iFrameController.playVideo();
-                                    await iFrameController.pauseVideo();
-                                  }
-
-                                  if (newValue == true) {
-                                    // currentSliderVlueの更新を待つ手動待機
-                                    await Future.delayed(const Duration(milliseconds: 1000));
-                                    currentCaptionIndex = searchClosestCaption(
-                                      currentSliderValue!,
-                                      captionsJa
-                                    );
-                                  }
-
-                                }
                               ),
+
+                              // ■ 読み上げボリューム
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width < 600
+                                        ? 95
+                                        : 95,
+                                      right: 22.5
+                                      ),
+                                    child: const Text('音量',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+
+
+                                  Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        right: MediaQuery.of(context).size.width < 600
+                                        ? 50
+                                        : 80
+                                      ),
+                                      child: SliderTheme(
+                                        data: const SliderThemeData(
+                                          trackShape: RoundedRectSliderTrackShape(),
+                                          trackHeight: 10,
+                                          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5.5),
+                                          overlayShape: RoundSliderOverlayShape(overlayRadius: 12.0),
+                                          showValueIndicator: ShowValueIndicator.always,
+                                        ),
+                                        child: Slider(
+                                          value: displayVolumeValue!,
+                                          min: 0,
+                                          max: 1,
+                                          label: displayVolumeValue!.toStringAsFixed(2),
+                                          onChanged: (value) async {
+                                            // フェーダー移動中の際の値をリアルタイムに反映
+                                            setState(() {
+                                              displayVolumeValue = value;
+                                            });
+                                          },
+                                          onChangeEnd: (value) async{
+                                            // providerの更新
+                                            ref.read(volumeValueProvider.notifier)
+                                               .setVolumeValue(value);
+                                            // 実際にttsの値を更新
+                                            await tts.setVolume(value); 
+                                          },
+                                          activeColor: Colors.blue,
+                                          inactiveColor: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              // ■ 読み上げスピード
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width < 600
+                                        ? 95
+                                        : 95,
+                                      right: 22.5
+                                      ),
+                                    child: const Text('速度',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+
+                                  Expanded(
+                                    child: Padding(
+                                        padding:  EdgeInsets.only(
+                                          right: MediaQuery.of(context).size.width < 600
+                                            ? 50
+                                            : 80
+                                        ),
+                                      child: SliderTheme(
+                                        data: const SliderThemeData(
+                                          trackShape: RoundedRectSliderTrackShape(),
+                                          trackHeight: 10,
+                                          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5.5),
+                                          overlayShape: RoundSliderOverlayShape(overlayRadius: 12.0),
+                                          showValueIndicator: ShowValueIndicator.always,
+                                        ),
+                                        child: Slider(
+                                          value: displaySpeedValue!,
+                                          min: 0.25,
+                                          max: 2,
+                                          label: displaySpeedValue!.toStringAsFixed(2),
+                                          onChanged: (value) async {
+                                            // フェーダー移動中の際の値をリアルタイムに反映
+                                            setState(() {
+                                              displaySpeedValue = value;
+                                            });
+                                          },
+                                          onChangeEnd: (value) async{
+                                            // providerの更新
+                                            ref.read(speedValueProvider.notifier)
+                                               .setSpeedValue(value);
+                                            // 実際にttsの値を更新
+                                            await tts.setSpeechRate(value);
+                                          },
+                                          activeColor: Colors.blue,
+                                          inactiveColor: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // ■ 読み上げON/OFF
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width < 600
+                                        ? 95
+                                        : 85
+                                      ),
+                                    child: const Text('ON/OFF',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+
+                                  Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        right: MediaQuery.of(context).size.width < 600
+                                          ? 140
+                                          : 172.5
+                                      ),
+                                      child: Transform.scale(
+                                        scale: 0.75,
+                                        child: Switch(
+                                          // activeColor: Colors.blue,
+                                          value: isTraceSpeaker,
+                                          onChanged: (bool newValue) async{
+                                            setState(() {
+                                              isTraceSpeaker = newValue; 
+                                              isUnStarted = false;
+                                              isPlaying = false;
+                                              isPaused = false;
+                                              isManuallyPaused = true;
+                                            });
+                                        
+                                            // コントローラー状態の変更を意図的に作り出し
+                                            // リスナーのループ意図的に入られる
+                                            if (iFrameController.value.playerState == PlayerState.playing) {
+                                              await iFrameController.pauseVideo();   
+                                              await iFrameController.playVideo();
+                                            } else {                                    
+                                              await iFrameController.playVideo();
+                                              await iFrameController.pauseVideo();
+                                            }
+                                        
+                                            if (newValue == true) {
+                                              // currentSliderVlueの更新を待つ手動待機
+                                              await Future.delayed(const Duration(milliseconds: 1000));
+                                              currentCaptionIndex = searchClosestCaption(
+                                                currentSliderValue!,
+                                                captionsJa
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                          // // ■ 読み上げボイスの選択メニュー
+                          // voicesJa == null 
+                          //   ? const SizedBox.shrink()
+                          //   : DropdownButton<String>(
+                          //       value: selectedVoice,
+                          //       onChanged: (String? newValue) {
+                          //         setState(() {
+                          //           selectedVoice = newValue;
+                          //           tts.setVoice({"name": newValue!});
+                          //         });
+                          //       },
+                          //       items: voicesJa!.map<DropdownMenuItem<String>>((String? value) {
+                          //         return DropdownMenuItem<String>(
+                          //           value: value,
+                          //           child: Text(value!),
+                          //         );
+                          //       }).toList(),
+                          //     )
 
                             ],
                           ),
                         ),
                       ),
 
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 15),
 
                       // ■ 戻るボタン                  
                       ElevatedButton(
@@ -902,12 +1129,15 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
                         )
                       ),
                   
+                      const SizedBox(height: 5),
 
                       // ■ 注意書き
-                      const SizedBox(
-                        height: 275,
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width < 600
+                          ? 350
+                          : 275,
                         width: 800,
-                        child: Card(
+                        child: const Card(
                           color:Colors.blueAccent,
                           margin: EdgeInsets.only(
                             top: 15,
