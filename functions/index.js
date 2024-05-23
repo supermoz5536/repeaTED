@@ -171,10 +171,76 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
       }) ||
       find(captionTracks, (track) => track.vssId.startsWith(".en")) ||
       find(captionTracks, {
-        vssId: "a.en",
+        vssId: ".zh-Hans",
+      }) ||
+      find(captionTracks, {
+        vssId: ".zh-Hant",
+      }) ||
+      find(captionTracks, {
+        vssId: ".es",
+      }) ||
+      find(captionTracks, {
+        vssId: ".pt",
+      }) ||
+      find(captionTracks, {
+        vssId: ".ar",
+      }) ||
+      find(captionTracks, {
+        vssId: ".hi",
+      }) ||
+      find(captionTracks, {
+        vssId: ".fr",
+      }) ||
+      find(captionTracks, {
+        vssId: ".ko",
+      }) ||
+      find(captionTracks, {
+        vssId: ".de",
+      }) ||
+      find(captionTracks, {
+        vssId: ".it",
+      }) ||
+      find(captionTracks, {
+        vssId: ".ru",
       }) ||
       find(captionTracks, {
         vssId: "a.ja",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.en",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.zh-Hans",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.zh-Hant",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.es",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.pt",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.ar",
+      }) ||
+      find(captionTracks, {
+        vssId: "a.hi",
+      }) ||
+      find(captionTracks, {
+        vssId: ".fr",
+      }) ||
+      find(captionTracks, {
+        vssId: ".ko",
+      }) ||
+      find(captionTracks, {
+        vssId: ".de",
+      }) ||
+      find(captionTracks, {
+        vssId: ".it",
+      }) ||
+      find(captionTracks, {
+        vssId: ".ru",
       });
 
     // 字幕の検索処理の結果を判定します

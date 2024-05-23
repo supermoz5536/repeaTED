@@ -39,8 +39,14 @@ class _TutorialPageState extends State<TutorialPage> {
     PageModel(
         color: const Color(0xFFF28B82),
         imageAssetPath: 'assets/pics/enjoy.png',
-        title: '楽しむ > 上達',
-        body: '英語の上達自体が目的じゃなくて\n動画を楽しむ過程で上達したい\n\nそういう英語のマッチョイズムから\n解放されたい人のためのアプリです',
+        title: '楽しい英語',
+        body: '英語学習に疲れたけど、英語には触れていたい。英語の上達も大切だけど、動画を楽しむ過程でも上達したい。\n\nそんな人のためのアプリ。',
+        doAnimateImage: true),
+    PageModel(
+        color: const Color(0xFF5886d6),
+        imageAssetPath: 'assets/pics/translate.png',
+        title: '革命的な吹替機能', 
+        body: '自分の好きな英語のYouTube動画を学習しながら視聴が可能。\n\n日本語吹き替え機能は12ヶ国語対応で英語以外の学習にもご利用できます。',
         doAnimateImage: true),
     PageModel(
         color: const Color(0xFF9B90BC),
@@ -49,7 +55,7 @@ class _TutorialPageState extends State<TutorialPage> {
         body: '①英語を"全集中"で聞きます（リーディングの練習にならないように字幕の確認は最小限にしましょう）\n②直後の日本語で、聞き取れなかった部分を脳内で答え合わせします。',
         doAnimateImage: true),
     PageModel(
-        color: const Color(0xFF5886d6),
+        color: const Color(0xFFF28B82),
         imageAssetPath: 'assets/pics/continue.png',
         title: '止めずに聴き流す', 
         body: '聞き取れない箇所があっても、動画を止めて確認しないでください。\n脳が動画を停止できることを学習すると、一発勝負の緊張感がなくなって学習効果が下がってしまいます。',
@@ -58,22 +64,22 @@ class _TutorialPageState extends State<TutorialPage> {
         color: const Color(0xFF81C784),
         imageAssetPath: 'assets/pics/cheese.png',
         title: '穴だらけでもOK', 
-        body: 'なので一回の視聴で単語や文法を\n完璧にしようとしないでください。\nそれは英語マッチョイズムです。\n動画を楽しむことが優先。遠回りに見えてそれが上達の秘訣です。',
-        doAnimateImage: true),
-    PageModel(
-        color: const Color(0xFFF28B82),
-        imageAssetPath: 'assets/pics/interesting.png',
-        title: 'Easy to Hard',
-        body: '動画は英検の級別になってるので\n簡単なレベルから始めましょう。\n徐々に難しい動画に移行していくと\n難しい動画だけ取り組むよりも高い学習効果があります。',
+        body: '一回の視聴で単語や文法を完璧にしなくても大丈夫です。\nまずは動画を楽しむことが最優先。遠回りに見えても、それが長く続けられる上達の秘訣です。',
         doAnimateImage: true),
     PageModel(
         color: const Color(0xFF5886d6),
-        imageAssetPath: 'assets/pics/search.png',
-        title: '好きだと上達も早い',
-        body: '興味のある事柄はより少ない反復で習熟できます。ぜひ、他の誰かではなく "あなた" が興味を感じる動画を探してください。',
+        imageAssetPath: 'assets/pics/interesting.png',
+        title: 'Easy to Hard',
+        body: '動画は英検の級別になってるので簡単なレベルから始めましょう。\n徐々に難しい動画に移行していくと難しい動画だけ取り組むよりも高い学習効果があります。',
         doAnimateImage: true),
     PageModel(
         color: const Color(0xFF9B90BC),
+        imageAssetPath: 'assets/pics/search.png',
+        title: '好きだと上達も早い',
+        body: '興味のあることはより少ない反復で習熟できます。ぜひ、他の誰かではなく "あなた" が興味を感じる動画で利用してください。',
+        doAnimateImage: true),
+    PageModel(
+        color: const Color(0xFF81C784),
         imageAssetPath: 'assets/pics/repeat.png',
         title: '継続は力なり',
         body: '動画は自動でループするので、飽きるまで繰り返しましょう。無意識レベルの深い部分まで学習が浸透すると、スムーズなアウトプットの下地となるような応用の効く知識になります。',

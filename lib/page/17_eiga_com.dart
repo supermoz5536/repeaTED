@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:repea_ted/const/const_text.dart';
 import 'package:repea_ted/model/page_transition_constructor.dart';
 import 'package:repea_ted/model/watch_%20page_constructor.dart';
 import 'package:repea_ted/page/tutorial.dart';
@@ -663,7 +664,7 @@ class _EigaComPageState extends ConsumerState<EigaComPage> {
                             ),
                           ),    
                           Text(
-                          '・英語のYoutube動画を、同時通訳者のように日本語で読み上げるアプリです。\n\n・下に表示されてる動画のサムネイルをクリックするか、上からYoutube動画のURLを入力して利用できます。\n\n・日本語、もしくは英語の字幕のある動画なら、どちらも日本語に翻訳して読み上げます。\n\n・動画URLを入力する際、利用可能な字幕が英語(自動生成)のみの動画は、翻訳が安定しない場合があるので予めご了承ください。',
+                          ConstText.supportedLang,
                             style: TextStyle(
                               color: Colors.white,
                               // fontWeight: FontWeight.bold,
@@ -1204,7 +1205,7 @@ class _EigaComPageState extends ConsumerState<EigaComPage> {
                 padding: const EdgeInsets.only(right: 10),
                 child: Center(
                   child: Text(
-                    '[字幕の使えない動画]、[字幕を日本語と英語以外の言語から生成してる動画]は、未対応です',
+                    ConstText.snackBarError,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width < 600

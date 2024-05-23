@@ -98,6 +98,7 @@ flutter:
     - assets/pics/2step.png
     - assets/pics/continue.png
     - assets/pics/cheese.png
+    - assets/pics/translate.png
     - assets/jsons/1_recommend.json
     - assets/jsons/2_ted_stage_talk.json
     - assets/jsons/3_ted_ed.json
