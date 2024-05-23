@@ -297,7 +297,20 @@ exports.getCaptionsURL = functions.https.onCall(async (data, context) => {
             text,
           };
         });
-    if (subtitle.vssId === "a.en" || subtitle.vssId === "a.ja" ) {
+    if (subtitle.vssId === "a.en" ||
+      subtitle.vssId === "a.ja" ||
+      subtitle.vssId === "a.zh-Hans" ||
+      subtitle.vssId === "a.zh-Hant" ||
+      subtitle.vssId === "a.es" ||
+      subtitle.vssId === "a.pt" ||
+      subtitle.vssId === "a.ar" ||
+      subtitle.vssId === "a.hi" ||
+      subtitle.vssId === "a.fr" ||
+      subtitle.vssId === "a.ko" ||
+      subtitle.vssId === "a.de" ||
+      subtitle.vssId === "a.it" ||
+      subtitle.vssId === "a.ru"
+    ) {
       lines = mergeCaptions(lines);
     }
 
