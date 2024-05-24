@@ -79,7 +79,7 @@ class _TutorialPageState extends State<TutorialPage> {
         body: '興味のあることはより少ない反復で習熟できます。ぜひ、他の誰かではなく "あなた" が興味を感じる動画で利用してください。',
         doAnimateImage: true),
     PageModel(
-        color: const Color(0xFF81C784),
+        color: const Color(0xFFF28B82),
         imageAssetPath: 'assets/pics/repeat.png',
         title: '継続は力なり',
         body: '動画は自動でループするので、飽きるまで繰り返しましょう。無意識レベルの深い部分まで学習が浸透すると、スムーズなアウトプットの下地となるような応用の効く知識になります。',

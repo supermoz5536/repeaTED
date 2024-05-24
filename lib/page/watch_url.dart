@@ -348,10 +348,8 @@ class _WatchURLPageState extends ConsumerState<WatchURLPage> {
   /// TTSの環境設定とコールバック設定
   Future<void> initTTS() async {
 
-      // 音量を70%に設定
-      await tts.setVolume(currentVolumeValue!); 
-      await tts.setSpeechRate(currentSpeedValue!);
-
+    await tts.setVolume(currentVolumeValue!); 
+    await tts.setSpeechRate(currentSpeedValue!);
 
     // 読み上げ完了時のコールバック設定
     tts.setCompletionHandler(() async{
